@@ -1,20 +1,17 @@
 #!/usr/bin/env -S deno run
-import { create_stack } from '../src/cfn-template-creator.ts';
+import { PartitionKey, StringAttribute } from '../src/DynamoDB_Table.ts';
+import { Stack } from '../src/Stack.ts';
 
-const stack = create_stack({
-  Description: 'Section 1 activity template - AWS CloudFormation Step by Step: Beginner to Intermediate',
-});
+const stack = Stack();
+stack.setDescription('Section 1 activity template - AWS CloudFormation Step by Step: Beginner to Intermediate');
 
 // Dynamodb: SampleTable
-stack.resource.add_dynamodb_table('SampleTable', {
+stack.addResource('SampleTable', {
+  Type: 'AWS::DynamoDB::Table',
   Properties: {
     TableName: 'section1-activity-table',
-    AttributeDefinitions: [
-      { AttributeName: 'id', AttributeType: 'S' }, //
-    ],
-    KeySchema: [
-      { AttributeName: 'id', KeyType: 'HASH' }, //
-    ],
+    AttributeDefinitions: [StringAttribute('id')],
+    KeySchema: [PartitionKey('id')],
     ProvisionedThroughput: {
       ReadCapacityUnits: 1,
       WriteCapacityUnits: 1,
@@ -23,7 +20,8 @@ stack.resource.add_dynamodb_table('SampleTable', {
 });
 
 // RDS instance: SampleRDSInstance
-stack.resource.add_rds_db_instance('SampleRDSInstance', {
+stack.addResource('SampleRDSInstance', {
+  Type: 'AWS::RDS::DBInstance',
   DeletionPolicy: 'Delete',
   Properties: {
     Engine: 'mariadb',

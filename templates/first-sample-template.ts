@@ -1,11 +1,11 @@
 #!/usr/bin/env -S deno run
-import { create_stack } from '../src/cfn-template-creator.ts';
+import { Stack } from '../src/Stack.ts';
 
-const stack = create_stack({
-  Description: 'Sample template for first stack - AWS CloudFormation Step by Step: Beginner to Intermediate',
-});
-stack.resource.add_sqs_queue('SampleQueue');
-stack.resource.add_sns_topic('SampleTopic', {
+const stack = Stack();
+stack.setDescription('Sample template for first stack - AWS CloudFormation Step by Step: Beginner to Intermediate');
+stack.addResource('SampleQueue', { Type: 'AWS::SQS::Queue' });
+stack.addResource('SampleTopic', {
+  Type: 'AWS::SNS::Topic',
   Properties: {
     DisplayName: 'My Sample Topic',
   },
