@@ -5,6 +5,7 @@ cd "${0%/*}"
 # test cases
 templates=(
   first-sample-template
+  section1-activity-template
 )
 
 function test_template {
