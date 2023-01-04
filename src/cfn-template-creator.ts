@@ -1,3 +1,6 @@
+import { create_sns_topic_resource, SnsTopicResource } from './sns/sns.ts';
+import { create_sqs_queue_resource } from './sqs/sqs.ts';
+
 interface Stack {
   Description: string;
 }
@@ -7,18 +10,12 @@ export const create_stack = ({ Description }: Stack) => {
 
   return {
     resource: {
-      add_sqs_queue(name: string, Properties?: Record<string, string>) {
-        Resources[name] = {
-          Type: 'AWS::SQS::Queue',
-          Properties,
-        };
+      add_sqs_queue(name: string) {
+        Resources[name] = create_sqs_queue_resource();
       },
 
-      add_sns_topic(name: string, Properties?: Record<string, string>) {
-        Resources[name] = {
-          Type: 'AWS::SNS::Topic',
-          Properties,
-        };
+      add_sns_topic(name: string, resource: SnsTopicResource) {
+        Resources[name] = create_sns_topic_resource(resource);
       },
     },
 
