@@ -1,3 +1,4 @@
+import { Ref } from './Ref.ts';
 import { Tag } from './Tag.ts';
 
 // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-instance.html
@@ -35,7 +36,7 @@ export interface EC2_Instance {
     PrivateIpAddress?: string;
     PropagateTagsToVolumeOnCreation?: boolean;
     RamdiskId?: string;
-    SecurityGroupIds?: string[];
+    SecurityGroupIds?: (string | Ref)[];
     SecurityGroups?: string[];
     SourceDestCheck?: boolean;
     SsmAssociations?: SsmAssociation[];

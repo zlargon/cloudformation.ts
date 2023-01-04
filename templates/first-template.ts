@@ -1,6 +1,7 @@
 #!/usr/bin/env -S deno run
 import { Stack } from '../src/Stack.ts';
 import { Tag } from '../src/Tag.ts';
+import { Ref } from '../src/Ref.ts';
 
 const stack = Stack();
 stack.setDescription('Our first template in CloudFormation course.');
@@ -11,6 +12,9 @@ stack.addResource('WebServerInstance', {
   Properties: {
     ImageId: 'ami-0b5eea76982371e91',
     InstanceType: 't2.micro',
+    SecurityGroupIds: [
+      Ref('WebServerSecurityGroup'), //
+    ],
     Tags: [
       Tag('Name', 'Web server'), //
       Tag('Project', 'CloudFormation Step By Step'),

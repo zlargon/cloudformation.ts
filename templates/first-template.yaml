@@ -6,6 +6,8 @@ Resources:
     Properties:
       ImageId: ami-0b5eea76982371e91
       InstanceType: t2.micro
+      SecurityGroupIds:
+        - Ref: WebServerSecurityGroup
       Tags:
         - Key: Name
           Value: Web server
