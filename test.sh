@@ -6,6 +6,7 @@ cd "${0%/*}"
 templates=(
   first-sample-template
   section1-activity-template
+  first-template
 )
 
 function test_template {
