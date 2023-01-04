@@ -1,11 +1,18 @@
 import { DynamoDB_Table } from './DynamoDB_Table.ts';
 import { EC2_Instance } from './EC2_Instance.ts';
+import { EC2_SecurityGroup } from './EC2_SecurityGroup.ts';
 import { RDS_DBInstance } from './RDS_DBInstance.ts';
 import { SNS_Topic } from './SNS_Topic.ts';
 import { SQS_Queue } from './SQS_Queue.ts';
 
 // Resource
-type Resource = DynamoDB_Table | RDS_DBInstance | SQS_Queue | SNS_Topic | EC2_Instance;
+type Resource =
+  | DynamoDB_Table //
+  | RDS_DBInstance
+  | SQS_Queue
+  | SNS_Topic
+  | EC2_Instance
+  | EC2_SecurityGroup;
 
 // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html
 interface Stack {

@@ -18,4 +18,23 @@ stack.addResource('WebServerInstance', {
   },
 });
 
+// Security Group
+stack.addResource('WebServerSecurityGroup', {
+  Type: 'AWS::EC2::SecurityGroup',
+  Properties: {
+    GroupDescription: 'Security group for web servers',
+    SecurityGroupIngress: [
+      {
+        IpProtocol: 'tcp', //
+        FromPort: 80,
+        ToPort: 80,
+        CidrIp: '0.0.0.0/0',
+      },
+    ],
+    Tags: [
+      Tag('Name', 'Web server security group'), //
+    ],
+  },
+});
+
 console.log(stack.json());
