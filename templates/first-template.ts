@@ -3,8 +3,7 @@ import { Stack } from '../src/Stack.ts';
 import { Tag } from '../src/Tag.ts';
 import { Ref } from '../src/Ref.ts';
 
-// define all the resource names
-const MyResource = {
+const Constant = {
   WebServerInstance: 'WebServerInstance',
   WebSecurityGroup: 'WebServerSecurityGroup',
   SQSQueue: 'SQSQueue',
@@ -15,13 +14,13 @@ const stack = Stack();
 stack.setDescription('Our first template in CloudFormation course.');
 
 // EC2 Instance
-stack.addResource(MyResource.WebServerInstance, {
+stack.addResource(Constant.WebServerInstance, {
   Type: 'AWS::EC2::Instance',
   Properties: {
     ImageId: 'ami-0b5eea76982371e91',
     InstanceType: 't2.micro',
     SecurityGroupIds: [
-      Ref(MyResource.WebSecurityGroup), //
+      Ref(Constant.WebSecurityGroup), //
     ],
     Tags: [
       Tag('Name', 'Web server'), //
@@ -31,7 +30,7 @@ stack.addResource(MyResource.WebServerInstance, {
 });
 
 // Security Group
-stack.addResource(MyResource.WebSecurityGroup, {
+stack.addResource(Constant.WebSecurityGroup, {
   Type: 'AWS::EC2::SecurityGroup',
   Properties: {
     GroupDescription: 'Security group for web servers',
@@ -50,9 +49,9 @@ stack.addResource(MyResource.WebSecurityGroup, {
 });
 
 // SQS Queue
-stack.addResource(MyResource.SQSQueue, {
+stack.addResource(Constant.SQSQueue, {
   Type: 'AWS::SQS::Queue',
-  DependsOn: MyResource.WebServerInstance,
+  DependsOn: Constant.WebServerInstance,
 });
 
 console.log(stack.json());

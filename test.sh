@@ -7,6 +7,7 @@ templates=(
   first-sample-template
   section1-activity-template
   first-template
+  section2-activity-template
 )
 
 function test_template {
