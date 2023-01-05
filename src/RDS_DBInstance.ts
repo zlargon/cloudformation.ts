@@ -1,9 +1,9 @@
+import { ResourceAttributes } from './ResourceAttributes.ts';
 import { Tag } from './Tag.ts';
 
 // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-dbinstance.html
-export interface RDS_DBInstance {
+export interface RDS_DBInstance extends ResourceAttributes {
   Type: 'AWS::RDS::DBInstance';
-  DeletionPolicy?: 'Delete' | 'Retain' | 'Snapshot';
   Properties?: {
     AllocatedStorage?: number;
     AllowMajorVersionUpgrade?: boolean;

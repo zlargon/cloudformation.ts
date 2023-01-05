@@ -1,7 +1,8 @@
+import { ResourceAttributes } from './ResourceAttributes.ts';
 import { Tag } from './Tag.ts';
 
 // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-sns-topic.html
-export interface SNS_Topic {
+export interface SNS_Topic extends ResourceAttributes {
   Type: 'AWS::SNS::Topic';
   Properties?: {
     ContentBasedDeduplication?: boolean;

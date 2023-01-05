@@ -1,7 +1,8 @@
+import { ResourceAttributes } from './ResourceAttributes.ts';
 import { Tag } from './Tag.ts';
 
 // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
-export interface EC2_SecurityGroup {
+export interface EC2_SecurityGroup extends ResourceAttributes {
   Type: 'AWS::EC2::SecurityGroup';
   Properties: {
     GroupDescription: string;

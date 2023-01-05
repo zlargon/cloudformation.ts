@@ -1,8 +1,9 @@
 import { Ref } from './Ref.ts';
+import { ResourceAttributes } from './ResourceAttributes.ts';
 import { Tag } from './Tag.ts';
 
 // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-instance.html
-export interface EC2_Instance {
+export interface EC2_Instance extends ResourceAttributes {
   Type: 'AWS::EC2::Instance';
   Properties?: {
     AdditionalInfo?: string;

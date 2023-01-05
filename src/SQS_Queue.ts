@@ -1,7 +1,8 @@
+import { ResourceAttributes } from './ResourceAttributes.ts';
 import { Tag } from './Tag.ts';
 
 // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-sqs-queue.html
-export interface SQS_Queue {
+export interface SQS_Queue extends ResourceAttributes {
   Type: 'AWS::SQS::Queue';
   Properties?: {
     ContentBasedDeduplication?: boolean;

@@ -1,7 +1,8 @@
+import { ResourceAttributes } from './ResourceAttributes.ts';
 import { Tag } from './Tag.ts';
 
 // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-dynamodb-table.html
-export interface DynamoDB_Table {
+export interface DynamoDB_Table extends ResourceAttributes {
   Type: 'AWS::DynamoDB::Table';
   Properties: {
     AttributeDefinitions?: AttributeDefinition[];
