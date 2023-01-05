@@ -1,3 +1,4 @@
+import { Ref } from './Ref.ts';
 import { ResourceAttributes } from './ResourceAttributes.ts';
 import { Tag } from './Tag.ts';
 
@@ -10,7 +11,7 @@ export interface EC2_SecurityGroup extends ResourceAttributes {
     SecurityGroupEgress?: Egress[];
     SecurityGroupIngress?: Ingress[];
     Tags?: Tag[];
-    VpcId?: string;
+    VpcId?: string | Ref;
   };
 }
 
