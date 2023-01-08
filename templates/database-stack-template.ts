@@ -3,6 +3,10 @@ import { Ref } from '../src/Ref.ts';
 import { Stack } from '../src/Stack.ts';
 
 const Constant = {
+  // Parameters
+  DbClass: 'DbClass',
+
+  // Resources
   DbSecurityGroup: 'DbSecurityGroup',
   DbSubnetGroup: 'DbSubnetGroup',
   DatabaseInstance: 'DatabaseInstance',
@@ -11,7 +15,18 @@ const Constant = {
 const stack = Stack();
 stack.setDescription('Sample database stack for the Parameters section');
 
-// Note: Please replace the value of VpcId property with the VPC id of your default VPC
+// ========================================================
+// Parameters
+// ========================================================
+stack.addParameter(Constant.DbClass, {
+  Type: 'String',
+  Description: 'RDS instance class',
+  Default: 'db.t2.micro',
+});
+
+// ========================================================
+// Resources
+// ========================================================
 stack.addResource(Constant.DbSecurityGroup, {
   Type: 'AWS::EC2::SecurityGroup',
   Properties: {
@@ -29,7 +44,6 @@ stack.addResource(Constant.DbSecurityGroup, {
   },
 });
 
-// Note: Please replace the value of SubnetIds property with the subnet ids of the subnets in your default VPC!
 stack.addResource(Constant.DbSubnetGroup, {
   Type: 'AWS::RDS::DBSubnetGroup',
   Properties: {
@@ -50,7 +64,7 @@ stack.addResource(Constant.DbSubnetGroup, {
 stack.addResource(Constant.DatabaseInstance, {
   Type: 'AWS::RDS::DBInstance',
   Properties: {
-    DBInstanceClass: 'db.t2.micro',
+    DBInstanceClass: Ref(Constant.DbClass),
     Engine: 'mysql',
     MultiAZ: false,
     PubliclyAccessible: true,

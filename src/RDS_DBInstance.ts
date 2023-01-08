@@ -18,7 +18,7 @@ export interface RDS_DBInstance extends ResourceAttributes {
     CustomIAMInstanceProfile?: string;
     DBClusterIdentifier?: string;
     DBClusterSnapshotIdentifier?: string;
-    DBInstanceClass?: string;
+    DBInstanceClass?: string | Ref;
     DBInstanceIdentifier?: string;
     DBName?: string;
     DBParameterGroupName?: string;
