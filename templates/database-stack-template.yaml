@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Sample database stack for the Parameters section
+Resources:
+  # Note: Please replace the value of VpcId property
+  # with the VPC id of your default VPC
+  DbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: vpc-0f68633eddd78fd56
+      GroupDescription: 'Database instances security group'
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          FromPort: 3306
+          ToPort: 3306
+          IpProtocol: tcp
+
+  # Note: Please replace the value of SubnetIds property
+  # with the subnet ids of the subnets in your default VPC!
+  DbSubnetGroup:
+    Type: 'AWS::RDS::DBSubnetGroup'
+    Properties:
+      DBSubnetGroupDescription: Subnets to launch db instances into
+      SubnetIds:
+        - subnet-0cc9fb7c1b70c570d
+        - subnet-0ceeb2182a2063f9d
+        - subnet-0acd8489903e7a0fb
+        - subnet-09227140fb95e095d
+        - subnet-0d08f018f7b018712
+        - subnet-061ed6fc8545869bd
+
+  DatabaseInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceClass: db.t2.micro
+      Engine: mysql
+      MultiAZ: false
+      PubliclyAccessible: true
+      AllocatedStorage: 8
+      MasterUsername: dbadmin
+      MasterUserPassword: '12345678'
+      DBSubnetGroupName: !Ref DbSubnetGroup
+      VPCSecurityGroups:
+        - !Ref DbSecurityGroup

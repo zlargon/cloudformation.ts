@@ -8,6 +8,7 @@ templates=(
   section1-activity-template
   first-template
   section2-activity-template
+  database-stack-template
 )
 
 function test_template {

@@ -1,3 +1,4 @@
+import { Ref } from './Ref.ts';
 import { ResourceAttributes } from './ResourceAttributes.ts';
 import { Tag } from './Tag.ts';
 
@@ -23,7 +24,7 @@ export interface RDS_DBInstance extends ResourceAttributes {
     DBParameterGroupName?: string;
     DBSecurityGroups?: string[];
     DBSnapshotIdentifier?: string;
-    DBSubnetGroupName?: string;
+    DBSubnetGroupName?: string | Ref;
     DeleteAutomatedBackups?: boolean;
     DeletionProtection?: boolean;
     Domain?: string;
@@ -67,7 +68,7 @@ export interface RDS_DBInstance extends ResourceAttributes {
     Timezone?: string;
     UseDefaultProcessorFeatures?: boolean;
     UseLatestRestorableTime?: boolean;
-    VPCSecurityGroups?: string[];
+    VPCSecurityGroups?: (string | Ref)[];
   };
 }
 

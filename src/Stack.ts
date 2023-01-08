@@ -9,6 +9,7 @@ import { EC2_SubnetRouteTableAssociation } from './EC2_SubnetRouteTableAssociati
 import { EC2_VPC } from './EC2_VPC.ts';
 import { EC2_VPCGatewayAttachment } from './EC2_VPCGatewayAttachment.ts';
 import { RDS_DBInstance } from './RDS_DBInstance.ts';
+import { RDS_DBSubnetGroup } from './RDS_DBSubnetGroup.ts';
 import { SNS_Topic } from './SNS_Topic.ts';
 import { SQS_Queue } from './SQS_Queue.ts';
 
@@ -16,6 +17,7 @@ import { SQS_Queue } from './SQS_Queue.ts';
 type Resource =
   | DynamoDB_Table //
   | RDS_DBInstance
+  | RDS_DBSubnetGroup
   | SQS_Queue
   | SNS_Topic
   | EC2_Instance
