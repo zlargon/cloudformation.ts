@@ -4,6 +4,7 @@ import { Tag } from '../src/Tag.ts';
 import { Ref } from '../src/Ref.ts';
 
 const Constant = {
+  InstanceType: 'InstanceType',
   WebServerInstance: 'WebServerInstance',
   WebSecurityGroup: 'WebServerSecurityGroup',
   SQSQueue: 'SQSQueue',
@@ -13,12 +14,24 @@ const Constant = {
 const stack = Stack();
 stack.setDescription('Our first template in CloudFormation course.');
 
+// ========================================================
+// Parameters
+// ========================================================
+stack.addParameter(Constant.InstanceType, {
+  Type: 'String',
+  Description: 'EC2 instance type',
+  Default: 't2.micro',
+});
+
+// ========================================================
+// Resources
+// ========================================================
 // EC2 Instance
 stack.addResource(Constant.WebServerInstance, {
   Type: 'AWS::EC2::Instance',
   Properties: {
     ImageId: 'ami-0b5eea76982371e91',
-    InstanceType: 't2.micro',
+    InstanceType: Ref(Constant.InstanceType),
     SecurityGroupIds: [
       Ref(Constant.WebSecurityGroup), //
     ],

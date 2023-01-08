@@ -23,7 +23,7 @@ export interface EC2_Instance extends ResourceAttributes {
     IamInstanceProfile?: string;
     ImageId?: string | Ref;
     InstanceInitiatedShutdownBehavior?: 'stop' | 'terminate';
-    InstanceType?: InstanceType;
+    InstanceType?: InstanceType | Ref;
     Ipv6AddressCount?: number;
     Ipv6Addresses?: InstanceIpv6Address[];
     KernelId?: string | Ref;

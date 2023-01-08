@@ -1,11 +1,16 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Our first template in CloudFormation course.
+Parameters:
+  InstanceType:
+    Type: String
+    Description: EC2 instance type
+    Default: t2.micro
 Resources:
   WebServerInstance:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-0b5eea76982371e91
-      InstanceType: t2.micro
+      InstanceType: !Ref InstanceType
       SecurityGroupIds:
         - Ref: WebServerSecurityGroup
       Tags:
