@@ -5,6 +5,18 @@ Parameters:
     Type: String
     Description: RDS instance class
     Default: db.t2.micro
+  MasterUsername:
+    Type: String
+    Description: Master username for the db instance
+  MasterUserPassword:
+    Type: String
+    Description: Master user password for the db instance
+  MultiAZ:
+    Type: String
+    Description: Enable Multi-AZ?
+  AllocatedStorage:
+    Type: Number
+    Description: Database storage size in GB
 Resources:
   # Note: Please replace the value of VpcId property
   # with the VPC id of your default VPC
@@ -38,11 +50,11 @@ Resources:
     Properties:
       DBInstanceClass: !Ref DbClass
       Engine: mysql
-      MultiAZ: false
+      MultiAZ: !Ref MultiAZ
       PubliclyAccessible: true
-      AllocatedStorage: 8
-      MasterUsername: dbadmin
-      MasterUserPassword: '12345678'
+      AllocatedStorage: !Ref AllocatedStorage
+      MasterUsername: !Ref MasterUsername
+      MasterUserPassword: !Ref MasterUserPassword
       DBSubnetGroupName: !Ref DbSubnetGroup
       VPCSecurityGroups:
         - !Ref DbSecurityGroup

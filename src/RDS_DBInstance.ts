@@ -6,7 +6,7 @@ import { Tag } from './Tag.ts';
 export interface RDS_DBInstance extends ResourceAttributes {
   Type: 'AWS::RDS::DBInstance';
   Properties?: {
-    AllocatedStorage?: number;
+    AllocatedStorage?: number | Ref;
     AllowMajorVersionUpgrade?: boolean;
     AssociatedRoles?: DBInstanceRole[];
     AutoMinorVersionUpgrade?: boolean;
@@ -38,12 +38,12 @@ export interface RDS_DBInstance extends ResourceAttributes {
     Iops?: number;
     KmsKeyId?: string;
     LicenseModel?: 'postgresql-license' | 'general-public-license' | 'license-included' | 'bring-your-own-license';
-    MasterUsername?: string;
-    MasterUserPassword?: string;
+    MasterUsername?: string | Ref;
+    MasterUserPassword?: string | Ref;
     MaxAllocatedStorage?: number;
     MonitoringInterval?: 0 | 1 | 5 | 10 | 15 | 30 | 60;
     MonitoringRoleArn?: string;
-    MultiAZ?: boolean;
+    MultiAZ?: boolean | Ref;
     NcharCharacterSetName?: string;
     NetworkType?: 'IPV4' | 'DUAL';
     OptionGroupName?: string;

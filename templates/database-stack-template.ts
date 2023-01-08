@@ -5,6 +5,10 @@ import { Stack } from '../src/Stack.ts';
 const Constant = {
   // Parameters
   DbClass: 'DbClass',
+  MasterUsername: 'MasterUsername',
+  MasterUserPassword: 'MasterUserPassword',
+  MultiAZ: 'MultiAZ',
+  AllocatedStorage: 'AllocatedStorage',
 
   // Resources
   DbSecurityGroup: 'DbSecurityGroup',
@@ -22,6 +26,26 @@ stack.addParameter(Constant.DbClass, {
   Type: 'String',
   Description: 'RDS instance class',
   Default: 'db.t2.micro',
+});
+
+stack.addParameter(Constant.MasterUsername, {
+  Type: 'String',
+  Description: 'Master username for the db instance',
+});
+
+stack.addParameter(Constant.MasterUserPassword, {
+  Type: 'String',
+  Description: 'Master user password for the db instance',
+});
+
+stack.addParameter(Constant.MultiAZ, {
+  Type: 'String',
+  Description: 'Enable Multi-AZ?',
+});
+
+stack.addParameter(Constant.AllocatedStorage, {
+  Type: 'Number',
+  Description: 'Database storage size in GB',
 });
 
 // ========================================================
@@ -66,11 +90,11 @@ stack.addResource(Constant.DatabaseInstance, {
   Properties: {
     DBInstanceClass: Ref(Constant.DbClass),
     Engine: 'mysql',
-    MultiAZ: false,
+    MultiAZ: Ref(Constant.MultiAZ),
     PubliclyAccessible: true,
-    AllocatedStorage: 8,
-    MasterUsername: 'dbadmin',
-    MasterUserPassword: '12345678',
+    AllocatedStorage: Ref(Constant.AllocatedStorage),
+    MasterUsername: Ref(Constant.MasterUsername),
+    MasterUserPassword: Ref(Constant.MasterUserPassword),
     DBSubnetGroupName: Ref(Constant.DbSubnetGroup),
     VPCSecurityGroups: [
       Ref(Constant.DbSecurityGroup), //
