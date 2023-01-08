@@ -13,17 +13,17 @@ templates=(
 
 function test_template {
   local test_file="$1"
-  deno run "templates/$test_file.ts" > "tmp/${test_file}.json"
-  cfn-flip "templates/$test_file.yaml" > "tmp/${test_file}-from-yaml.json"
-  echo "" >> "tmp/${test_file}-from-yaml.json" # add new line
+  deno run "templates/$test_file.ts" > "output/${test_file}.json"
+  cfn-flip "templates/$test_file.yaml" > "output/${test_file}-from-yaml.json"
+  echo "" >> "output/${test_file}-from-yaml.json" # add new line
 
-  cmp "tmp/${test_file}.json" "tmp/${test_file}-from-yaml.json" || { echo "❌ Test '${test_file}' failed"; return; }
+  cmp "output/${test_file}.json" "output/${test_file}-from-yaml.json" || { echo "❌ Test '${test_file}' failed"; return; }
   echo "✅ Test '${test_file}' pass"
 }
 
-# create new tmp folder
-rm -rf tmp
-mkdir -p tmp
+# create new output folder
+rm -rf output
+mkdir -p output
 
 # test templates
 for template in "${templates[@]}"; do
