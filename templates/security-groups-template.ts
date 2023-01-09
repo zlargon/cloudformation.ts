@@ -4,12 +4,10 @@ import { Ref } from '../src/Ref.ts';
 import { Stack } from '../src/Stack.ts';
 
 const Constant = {
-  // Note: Please replace the value of VpcId property with the VPC id of your default VPC
-  defaultVpcId: 'vpc-0f68633eddd78fd56',
-
   // Parameters
   SecurityGroupPorts: 'SecurityGroupPorts',
   DbSubnets: 'DbSubnets',
+  VpcId: 'VpcId',
 
   // Resources
   WebServerSecurityGroup: 'WebServerSecurityGroup',
@@ -30,16 +28,13 @@ stack.addParameter(Constant.SecurityGroupPorts, {
 });
 
 stack.addParameter(Constant.DbSubnets, {
-  Type: 'CommaDelimitedList',
+  Type: 'List<AWS::EC2::Subnet::Id>',
   Description: 'DB subnet ids as a list: <subnet1>,<subnet2>,...',
-  Default: [
-    'subnet-0cc9fb7c1b70c570d',
-    'subnet-0ceeb2182a2063f9d',
-    'subnet-0acd8489903e7a0fb',
-    'subnet-09227140fb95e095d',
-    'subnet-0d08f018f7b018712',
-    'subnet-061ed6fc8545869bd',
-  ].join(', '),
+});
+
+stack.addParameter(Constant.VpcId, {
+  Type: 'AWS::EC2::VPC::Id',
+  Description: 'A valid VPC id in your AWS account',
 });
 
 // ========================================================
@@ -48,7 +43,7 @@ stack.addParameter(Constant.DbSubnets, {
 stack.addResource(Constant.WebServerSecurityGroup, {
   Type: 'AWS::EC2::SecurityGroup',
   Properties: {
-    VpcId: Constant.defaultVpcId,
+    VpcId: Ref(Constant.VpcId),
     GroupDescription: 'Web server instances security group',
     SecurityGroupIngress: [
       {
@@ -64,7 +59,7 @@ stack.addResource(Constant.WebServerSecurityGroup, {
 stack.addResource(Constant.DbSecurityGroup, {
   Type: 'AWS::EC2::SecurityGroup',
   Properties: {
-    VpcId: Constant.defaultVpcId,
+    VpcId: Ref(Constant.VpcId),
     GroupDescription: 'Database instances security group',
     SecurityGroupIngress: [
       {

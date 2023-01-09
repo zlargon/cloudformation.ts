@@ -6,15 +6,16 @@ Parameters:
     Description: 'Port numbers as a list: <web-server-port>,<database-port>'
     Default: 80, 3306
   DbSubnets:
-    Type: CommaDelimitedList
+    Type: List<AWS::EC2::Subnet::Id>
     Description: 'DB subnet ids as a list: <subnet1>,<subnet2>,...'
-    Default: 'subnet-0cc9fb7c1b70c570d, subnet-0ceeb2182a2063f9d, subnet-0acd8489903e7a0fb, subnet-09227140fb95e095d, subnet-0d08f018f7b018712, subnet-061ed6fc8545869bd'
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: A valid VPC id in your AWS account
 Resources:
   WebServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      # Note: Please replace the value of VpcId property with the VPC id of your default VPC
-      VpcId: vpc-0f68633eddd78fd56
+      VpcId: !Ref VpcId
       GroupDescription: Web server instances security group
       SecurityGroupIngress:
         - CidrIp: 0.0.0.0/0
@@ -25,8 +26,7 @@ Resources:
   DbSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      # Note: Please replace the value of VpcId property with the VPC id of your default VPC
-      VpcId: vpc-0f68633eddd78fd56
+      VpcId: !Ref VpcId
       GroupDescription: Database instances security group
       SecurityGroupIngress:
         - CidrIp: 0.0.0.0/0
