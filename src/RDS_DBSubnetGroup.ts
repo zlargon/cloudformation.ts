@@ -1,3 +1,4 @@
+import { SelectedValue } from './Fn_Select.ts';
 import { Ref } from './Ref.ts';
 import { ResourceAttributes } from './ResourceAttributes.ts';
 import { Tag } from './Tag.ts';
@@ -8,7 +9,7 @@ export interface RDS_DBSubnetGroup extends ResourceAttributes {
   Properties: {
     DBSubnetGroupDescription: string;
     DBSubnetGroupName?: string;
-    SubnetIds: (string | Ref)[];
+    SubnetIds: (string | Ref | SelectedValue)[] | Ref;
     Tags?: Tag[];
   };
 }

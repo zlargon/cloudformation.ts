@@ -9,10 +9,12 @@ const Constant = {
 
   // Parameters
   SecurityGroupPorts: 'SecurityGroupPorts',
+  DbSubnets: 'DbSubnets',
 
   // Resources
   WebServerSecurityGroup: 'WebServerSecurityGroup',
   DbSecurityGroup: 'DbSecurityGroup',
+  DbSubnetGroup: 'DbSubnetGroup',
 };
 
 const stack = Stack();
@@ -25,6 +27,19 @@ stack.addParameter(Constant.SecurityGroupPorts, {
   Type: 'List<Number>',
   Description: 'Port numbers as a list: <web-server-port>,<database-port>',
   Default: '80, 3306',
+});
+
+stack.addParameter(Constant.DbSubnets, {
+  Type: 'CommaDelimitedList',
+  Description: 'DB subnet ids as a list: <subnet1>,<subnet2>,...',
+  Default: [
+    'subnet-0cc9fb7c1b70c570d',
+    'subnet-0ceeb2182a2063f9d',
+    'subnet-0acd8489903e7a0fb',
+    'subnet-09227140fb95e095d',
+    'subnet-0d08f018f7b018712',
+    'subnet-061ed6fc8545869bd',
+  ].join(', '),
 });
 
 // ========================================================
@@ -59,6 +74,14 @@ stack.addResource(Constant.DbSecurityGroup, {
         IpProtocol: 'tcp',
       },
     ],
+  },
+});
+
+stack.addResource(Constant.DbSubnetGroup, {
+  Type: 'AWS::RDS::DBSubnetGroup',
+  Properties: {
+    DBSubnetGroupDescription: 'Subnets to launch db instances into',
+    SubnetIds: Ref(Constant.DbSubnets),
   },
 });
 
