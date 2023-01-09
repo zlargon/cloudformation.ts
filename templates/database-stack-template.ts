@@ -25,27 +25,41 @@ stack.setDescription('Sample database stack for the Parameters section');
 stack.addParameter(Constant.DbClass, {
   Type: 'String',
   Description: 'RDS instance class',
+  AllowedValues: ['db.t2.micro', 'db.t2.small'],
+  ConstraintDescription: 'DbClass parameter can only to be db.t2.micro, db.t2.small',
   Default: 'db.t2.micro',
 });
 
 stack.addParameter(Constant.MasterUsername, {
   Type: 'String',
   Description: 'Master username for the db instance',
+  MaxLength: 10,
+  Default: 'dbadmin',
+  AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*',
 });
 
 stack.addParameter(Constant.MasterUserPassword, {
   Type: 'String',
   Description: 'Master user password for the db instance',
+  MinLength: 8,
+  NoEcho: true,
 });
 
 stack.addParameter(Constant.MultiAZ, {
   Type: 'String',
   Description: 'Enable Multi-AZ?',
+  AllowedValues: ['true', 'false'],
+  ConstraintDescription: 'MultiAZ parameter should be either true or false.',
+  Default: 'false',
 });
 
 stack.addParameter(Constant.AllocatedStorage, {
   Type: 'Number',
   Description: 'Database storage size in GB',
+  MinValue: 8,
+  MaxValue: 20,
+  ConstraintDescription: 'AllocatedStorage parameter value should be between 8 and 20.',
+  Default: '8',
 });
 
 // ========================================================
