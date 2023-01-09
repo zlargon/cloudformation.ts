@@ -1,3 +1,4 @@
+import { SelectedValue } from './Fn_Select.ts';
 import { Ref } from './Ref.ts';
 import { ResourceAttributes } from './ResourceAttributes.ts';
 import { Tag } from './Tag.ts';
@@ -32,13 +33,13 @@ interface Ingress {
   CidrIp?: string;
   CidrIpv6?: string;
   Description?: string;
-  FromPort?: number;
+  FromPort?: number | SelectedValue;
   IpProtocol: IpProtocol;
   SourcePrefixListId?: string;
   SourceSecurityGroupId?: string;
   SourceSecurityGroupName?: string;
   SourceSecurityGroupOwnerId?: string;
-  ToPort?: number;
+  ToPort?: number | SelectedValue;
 }
 
 // https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml

@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: security groups
+Parameters:
+  SecurityGroupPorts:
+    Type: List<Number>
+    Description: 'Port numbers as a list: <web-server-port>,<database-port>'
+    Default: 80, 3306
+Resources:
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      # Note: Please replace the value of VpcId property with the VPC id of your default VPC
+      VpcId: vpc-0f68633eddd78fd56
+      GroupDescription: Web server instances security group
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          FromPort:
+            Fn::Select: [0, !Ref SecurityGroupPorts]
+          ToPort: !Select [0, !Ref SecurityGroupPorts]
+          IpProtocol: tcp
+  DbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      # Note: Please replace the value of VpcId property with the VPC id of your default VPC
+      VpcId: vpc-0f68633eddd78fd56
+      GroupDescription: Database instances security group
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          FromPort: !Select [1, !Ref SecurityGroupPorts]
+          ToPort: !Select [1, !Ref SecurityGroupPorts]
+          IpProtocol: tcp
