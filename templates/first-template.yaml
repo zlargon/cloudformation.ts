@@ -15,7 +15,13 @@ Resources:
         - Ref: WebServerSecurityGroup
       Tags:
         - Key: Name
-          Value: Web server
+          Value: !Sub '${AWS::StackName}-web-server' # StackName-web-server
+        - Key: Name2
+          Value: !Sub
+            - '${AWS::StackName}-web-server-${instanceType}-${str}-${num}'
+            - instanceType: !Ref InstanceType
+              str: hello
+              num: 123
         - Key: Project
           Value: CloudFormation Step By Step
   WebServerSecurityGroup:

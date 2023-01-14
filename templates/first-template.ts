@@ -2,6 +2,7 @@
 import { Stack } from '../src/Stack.ts';
 import { Tag } from '../src/Tag.ts';
 import { Ref } from '../src/Ref.ts';
+import { Fn_Sub } from '../src/Fn_Sub.ts';
 
 const Constant = {
   InstanceType: 'InstanceType',
@@ -36,7 +37,15 @@ stack.addResource(Constant.WebServerInstance, {
       Ref(Constant.WebSecurityGroup), //
     ],
     Tags: [
-      Tag('Name', 'Web server'), //
+      Tag('Name', Fn_Sub('${AWS::StackName}-web-server')),
+      Tag(
+        'Name2',
+        Fn_Sub('${AWS::StackName}-web-server-${instanceType}-${str}-${num}', {
+          instanceType: Ref(Constant.InstanceType),
+          str: 'hello',
+          num: 123,
+        })
+      ),
       Tag('Project', 'CloudFormation Step By Step'),
     ],
   },
