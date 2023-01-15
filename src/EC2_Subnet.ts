@@ -1,3 +1,4 @@
+import { SelectedValue } from './Fn_Select.ts';
 import { Ref } from './Ref.ts';
 import { ResourceAttributes } from './ResourceAttributes.ts';
 import { Tag } from './Tag.ts';
@@ -7,9 +8,9 @@ export interface EC2_Subnet extends ResourceAttributes {
   Type: 'AWS::EC2::Subnet';
   Properties: {
     AssignIpv6AddressOnCreation?: boolean;
-    AvailabilityZone?: string;
+    AvailabilityZone?: string | Ref;
     AvailabilityZoneId?: string;
-    CidrBlock?: string;
+    CidrBlock?: string | Ref | SelectedValue;
     EnableDns64?: boolean;
     Ipv6CidrBlock?: string;
     Ipv6Native?: boolean;

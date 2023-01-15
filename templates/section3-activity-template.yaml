@@ -5,24 +5,49 @@ Description: >-
   a web server EC2 instance in the public subnet
   and a security group attached to this EC2 instance.
 
+Parameters:
+  InstanceType:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.nano
+      - t2.micro
+      - t2.small
+  ImageId:
+    Type: AWS::EC2::Image::Id
+    Default: ami-0b5eea76982371e91
+  EbsVolumeSize:
+    Type: Number
+    Default: 20
+    Description: Volume size in GiB
+  KeyPairName:
+    Type: AWS::EC2::KeyPair::KeyName
+  VpcCidrBlocks:
+    Type: CommaDelimitedList
+    Default: '10.0.0.0/16, 10.0.0.0/24, 10.0.1.0/24'
+    Description: vpc, public subnet, private subnet
+  SubnetAZ:
+    Type: AWS::EC2::AvailabilityZone::Name
+    Default: us-east-1a
+
 Resources:
   Vpc:
     Type: AWS::EC2::VPC
     Description: Section 3 activity VPC
     Properties:
-      CidrBlock: 10.0.0.0/16
+      CidrBlock: !Select [0, !Ref VpcCidrBlocks]
       EnableDnsSupport: true
       EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: Section 3 Activity VPC
+          Value: !Sub '${AWS::StackName}-vpc'
 
   # Subnets ---
   PublicSubnet:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: us-east-1a
-      CidrBlock: 10.0.0.0/24
+      AvailabilityZone: !Ref SubnetAZ
+      CidrBlock: !Select [1, !Ref VpcCidrBlocks]
       MapPublicIpOnLaunch: true
       VpcId: !Ref Vpc
       Tags:
@@ -32,8 +57,8 @@ Resources:
   PrivateSubnet:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: us-east-1a
-      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: !Ref SubnetAZ
+      CidrBlock: !Select [2, !Ref VpcCidrBlocks]
       VpcId: !Ref Vpc
       Tags:
         - Key: Name
@@ -91,15 +116,16 @@ Resources:
       - InternetRoute
       - PublicSubnetRouteTableAssoc
     Properties:
-      InstanceType: t2.micro
+      InstanceType: !Ref InstanceType
       SubnetId: !Ref PublicSubnet
-      ImageId: ami-0b5eea76982371e91
+      ImageId: !Ref ImageId
+      KeyName: !Ref KeyPairName
       SecurityGroupIds:
         - !Ref WebServerSecurityGroup
       BlockDeviceMappings:
         - DeviceName: /dev/sdf
           Ebs:
-            VolumeSize: 20
+            VolumeSize: !Ref EbsVolumeSize
             VolumeType: gp2
       Tags:
         - Key: Name

@@ -27,7 +27,7 @@ export interface EC2_Instance extends ResourceAttributes {
     Ipv6AddressCount?: number;
     Ipv6Addresses?: InstanceIpv6Address[];
     KernelId?: string | Ref;
-    KeyName?: string;
+    KeyName?: string | Ref;
     LaunchTemplate?: LaunchTemplateSpecification;
     LicenseSpecifications?: LicenseSpecification[];
     Monitoring?: boolean;
@@ -81,7 +81,7 @@ interface Ebs {
   Iops?: number;
   KmsKeyId?: string;
   SnapshotId?: string;
-  VolumeSize?: number;
+  VolumeSize?: number | Ref;
   VolumeType?: 'gp2' | 'gp3' | 'io1' | 'io2' | 'sc1' | 'st1' | 'standard';
 }
 

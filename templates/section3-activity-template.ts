@@ -2,6 +2,8 @@
 import { Stack } from '../src/Stack.ts';
 import { Tag } from '../src/Tag.ts';
 import { Ref } from '../src/Ref.ts';
+import { Fn_Select } from '../src/Fn_Select.ts';
+import { Fn_Sub } from '../src/Fn_Sub.ts';
 
 const stack = Stack();
 stack.setDescription(`Section 3 Activity template.
@@ -10,6 +12,14 @@ a web server EC2 instance in the public subnet
 and a security group attached to this EC2 instance.`);
 
 const Constant = {
+  // Parameters
+  InstanceType: 'InstanceType',
+  ImageId: 'ImageId',
+  EbsVolumeSize: 'EbsVolumeSize',
+  KeyPairName: 'KeyPairName',
+  VpcCidrBlocks: 'VpcCidrBlocks',
+  SubnetAZ: 'SubnetAZ',
+
   // Resources
   Vpc: 'Vpc',
   PublicSubnet: 'PublicSubnet',
@@ -25,15 +35,57 @@ const Constant = {
   WebServerSecurityGroup: 'WebServerSecurityGroup',
 };
 
+// ==============================================
+// Parameters
+// ==============================================
+stack.addParameter(Constant.InstanceType, {
+  Type: 'String',
+  Default: 't2.micro',
+  AllowedValues: [
+    't2.nano', //
+    't2.micro',
+    't2.small',
+  ],
+});
+
+stack.addParameter(Constant.ImageId, {
+  Type: 'AWS::EC2::Image::Id',
+  Default: 'ami-0b5eea76982371e91',
+});
+
+stack.addParameter(Constant.EbsVolumeSize, {
+  Type: 'Number',
+  Default: 20,
+  Description: 'Volume size in GiB',
+});
+
+stack.addParameter(Constant.KeyPairName, {
+  Type: 'AWS::EC2::KeyPair::KeyName',
+});
+
+stack.addParameter(Constant.VpcCidrBlocks, {
+  Type: 'CommaDelimitedList',
+  Default: '10.0.0.0/16, 10.0.0.0/24, 10.0.1.0/24',
+  Description: 'vpc, public subnet, private subnet',
+});
+
+stack.addParameter(Constant.SubnetAZ, {
+  Type: 'AWS::EC2::AvailabilityZone::Name',
+  Default: 'us-east-1a',
+});
+
+// ==============================================
+// VPC
+// ==============================================
 stack.addResource(Constant.Vpc, {
   Type: 'AWS::EC2::VPC',
   Description: 'Section 3 activity VPC',
   Properties: {
-    CidrBlock: '10.0.0.0/16',
+    CidrBlock: Fn_Select(0, Ref(Constant.VpcCidrBlocks)), // 10.0.0.0/16
     EnableDnsSupport: true,
     EnableDnsHostnames: true,
     Tags: [
-      Tag('Name', 'Section 3 Activity VPC'), //
+      Tag('Name', Fn_Sub('${AWS::StackName}-vpc')), //
     ],
   },
 });
@@ -44,8 +96,8 @@ stack.addResource(Constant.Vpc, {
 stack.addResource(Constant.PublicSubnet, {
   Type: 'AWS::EC2::Subnet',
   Properties: {
-    AvailabilityZone: 'us-east-1a',
-    CidrBlock: '10.0.0.0/24',
+    AvailabilityZone: Ref(Constant.SubnetAZ),
+    CidrBlock: Fn_Select(1, Ref(Constant.VpcCidrBlocks)), // 10.0.0.0/24
     MapPublicIpOnLaunch: true,
     VpcId: Ref(Constant.Vpc),
     Tags: [
@@ -56,8 +108,8 @@ stack.addResource(Constant.PublicSubnet, {
 stack.addResource(Constant.PrivateSubnet, {
   Type: 'AWS::EC2::Subnet',
   Properties: {
-    AvailabilityZone: 'us-east-1a',
-    CidrBlock: '10.0.1.0/24',
+    AvailabilityZone: Ref(Constant.SubnetAZ),
+    CidrBlock: Fn_Select(2, Ref(Constant.VpcCidrBlocks)), // 10.0.1.0/24
     VpcId: Ref(Constant.Vpc),
     Tags: [
       Tag('Name', 'Private Subnet'), //
@@ -135,15 +187,16 @@ stack.addResource(Constant.WebServerInstance, {
   Type: 'AWS::EC2::Instance',
   DependsOn: [Constant.InternetRoute, Constant.PublicSubnetRouteTableAssoc],
   Properties: {
-    InstanceType: 't2.micro',
+    InstanceType: Ref(Constant.InstanceType), // t2.micro
     SubnetId: Ref(Constant.PublicSubnet),
-    ImageId: 'ami-0b5eea76982371e91',
+    ImageId: Ref(Constant.ImageId), // ami-0b5eea76982371e91
+    KeyName: Ref(Constant.KeyPairName),
     SecurityGroupIds: [Ref(Constant.WebServerSecurityGroup)],
     BlockDeviceMappings: [
       {
         DeviceName: '/dev/sdf',
         Ebs: {
-          VolumeSize: 20,
+          VolumeSize: Ref(Constant.EbsVolumeSize),
           VolumeType: 'gp2',
         },
       },

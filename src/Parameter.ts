@@ -40,7 +40,7 @@ export interface Parameter {
   AllowedPattern?: string;
   AllowedValues?: string[];
   ConstraintDescription?: string;
-  Default?: string;
+  Default?: unknown;
   Description?: string;
   MaxLength?: number;
   MaxValue?: number;
