@@ -1,51 +1,16 @@
 #!/usr/bin/env -S deno run
 import { Fn_Select } from '../src/Fn_Select.ts';
 import { Fn_Sub } from '../src/Fn_Sub.ts';
-import { Ref } from '../src/Ref.ts';
 import { Stack } from '../src/Stack.ts';
 import { Tag } from '../src/Tag.ts';
 
 const stack = Stack();
 stack.setDescription('Sample database stack for the Metadata and Mappings section');
 
-const Constant = {
-  // Parameters
-  MasterUsername: 'MasterUsername',
-  MasterUserPassword: 'MasterUserPassword',
-  MultiAZ: 'MultiAZ',
-  AllocatedStorage: 'AllocatedStorage',
-  SecurityGroupPorts: 'SecurityGroupPorts',
-  DbSubnets: 'DbSubnets',
-  VpcId: 'VpcId',
-  EnvironmentName: 'EnvironmentName',
-
-  // Resources
-  Bastion: 'Bastion',
-  WebServerSecurityGroup: 'WebServerSecurityGroup',
-  DbSecurityGroup: 'DbSecurityGroup',
-  DbSubnetGroup: 'DbSubnetGroup',
-  DatabaseInstance: 'DatabaseInstance',
-};
-
-// ==============================================
-// Metadata
-// ==============================================
-stack.metadata.addParameterGroup('Database Instance Settings', [
-  Constant.MultiAZ,
-  Constant.AllocatedStorage,
-  Constant.MasterUsername,
-  Constant.MasterUserPassword,
-]);
-stack.metadata.addParameterGroup('Network Settings', [
-  Constant.VpcId, //
-  Constant.DbSubnets,
-  Constant.SecurityGroupPorts,
-]);
-
 // ==============================================
 // Parameters
 // ==============================================
-stack.addParameter(Constant.MasterUsername, {
+const MasterUsername = stack.addParameter('MasterUsername', {
   Type: 'String',
   Description: 'Master username for the db instance',
   MaxLength: 10,
@@ -53,14 +18,14 @@ stack.addParameter(Constant.MasterUsername, {
   AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*',
 });
 
-stack.addParameter(Constant.MasterUserPassword, {
+const MasterUserPassword = stack.addParameter('MasterUserPassword', {
   Type: 'String',
   Description: 'Master user password for the db instance',
   MinLength: 8,
   NoEcho: true,
 });
 
-stack.addParameter(Constant.MultiAZ, {
+const MultiAZ = stack.addParameter('MultiAZ', {
   Type: 'String',
   Description: 'Enable Multi-AZ?',
   AllowedValues: [true, false],
@@ -68,8 +33,7 @@ stack.addParameter(Constant.MultiAZ, {
   Default: false,
 });
 
-stack.metadata.setParameterLabel(Constant.AllocatedStorage, 'Allocated Storage Size');
-stack.addParameter(Constant.AllocatedStorage, {
+const AllocatedStorage = stack.addParameter('AllocatedStorage', {
   Type: 'Number',
   Description: 'Database storage size in GB',
   MinValue: 8,
@@ -77,28 +41,44 @@ stack.addParameter(Constant.AllocatedStorage, {
   ConstraintDescription: 'AllocatedStorage parameter value should be between 8 and 20.',
   Default: 8,
 });
+stack.metadata.setParameterLabel(AllocatedStorage.Name(), 'Allocated Storage Size');
 
-stack.addParameter(Constant.SecurityGroupPorts, {
+const SecurityGroupPorts = stack.addParameter('SecurityGroupPorts', {
   Type: 'List<Number>',
   Description: 'Port numbers as a list: <web-server-port>,<database-port>',
   Default: '80,3306',
 });
 
-stack.addParameter(Constant.DbSubnets, {
+const DbSubnets = stack.addParameter('DbSubnets', {
   Type: 'List<AWS::EC2::Subnet::Id>',
   Description: 'Db subnet ids as a list: <subnet1>,<subnet2>,...',
 });
 
-stack.addParameter(Constant.VpcId, {
+const VpcId = stack.addParameter('VpcId', {
   Type: 'AWS::EC2::VPC::Id',
   Description: 'A valid VPC id in your AWS account',
 });
 
-stack.addParameter(Constant.EnvironmentName, {
+const EnvironmentName = stack.addParameter('EnvironmentName', {
   Type: 'String',
   AllowedValues: ['prod', 'test'],
   Default: 'test',
 });
+
+// ==============================================
+// Metadata
+// ==============================================
+stack.metadata.addParameterGroup('Database Instance Settings', [
+  MultiAZ.Name(),
+  AllocatedStorage.Name(),
+  MasterUsername.Name(),
+  MasterUserPassword.Name(),
+]);
+stack.metadata.addParameterGroup('Network Settings', [
+  VpcId.Name(), //
+  DbSubnets.Name(),
+  SecurityGroupPorts.Name(),
+]);
 
 // ==============================================
 // Mappings
@@ -111,13 +91,13 @@ const Fn_FindInEnvironmentMap = stack.setMapping('EnvironmentOptions', {
 // ==============================================
 // Resources
 // ==============================================
-stack.addResource(Constant.Bastion, {
+stack.addResource('Bastion', {
   Type: 'AWS::EC2::Instance',
   Properties: {
     ImageId: 'ami-0b5eea76982371e91',
     InstanceType: 't2.micro',
     SubnetId: Fn_Select({
-      Options: Ref(Constant.DbSubnets),
+      Options: DbSubnets.Ref(),
       Index: 0,
     }),
     Tags: [
@@ -126,20 +106,20 @@ stack.addResource(Constant.Bastion, {
   },
 });
 
-stack.addResource(Constant.WebServerSecurityGroup, {
+stack.addResource('WebServerSecurityGroup', {
   Type: 'AWS::EC2::SecurityGroup',
   Properties: {
-    VpcId: Ref(Constant.VpcId),
+    VpcId: VpcId.Ref(),
     GroupDescription: 'Web server instances security group',
     SecurityGroupIngress: [
       {
         CidrIp: '0.0.0.0/0',
         FromPort: Fn_Select({
-          Options: Ref(Constant.SecurityGroupPorts),
+          Options: SecurityGroupPorts.Ref(),
           Index: 0,
         }),
         ToPort: Fn_Select({
-          Options: Ref(Constant.SecurityGroupPorts),
+          Options: SecurityGroupPorts.Ref(),
           Index: 0,
         }),
         IpProtocol: 'tcp',
@@ -149,20 +129,20 @@ stack.addResource(Constant.WebServerSecurityGroup, {
 });
 
 // Note: Please replace the value of VpcId property with the VPC id of your default VPC
-stack.addResource(Constant.DbSecurityGroup, {
+const DbSecurityGroup = stack.addResource('DbSecurityGroup', {
   Type: 'AWS::EC2::SecurityGroup',
   Properties: {
-    VpcId: Ref(Constant.VpcId),
+    VpcId: VpcId.Ref(),
     GroupDescription: 'Database instances security group',
     SecurityGroupIngress: [
       {
         CidrIp: '0.0.0.0/0',
         FromPort: Fn_Select({
-          Options: Ref(Constant.SecurityGroupPorts),
+          Options: SecurityGroupPorts.Ref(),
           Index: 1,
         }),
         ToPort: Fn_Select({
-          Options: Ref(Constant.SecurityGroupPorts),
+          Options: SecurityGroupPorts.Ref(),
           Index: 1,
         }),
         IpProtocol: 'tcp',
@@ -172,27 +152,27 @@ stack.addResource(Constant.DbSecurityGroup, {
 });
 
 // Note: Please replace the value of SubnetIds property with the subnet ids of the subnets in your default VPC!
-stack.addResource(Constant.DbSubnetGroup, {
+const DbSubnetGroup = stack.addResource('DbSubnetGroup', {
   Type: 'AWS::RDS::DBSubnetGroup',
   Properties: {
     DBSubnetGroupDescription: 'Subnets to launch db instances into',
-    SubnetIds: Ref(Constant.DbSubnets),
+    SubnetIds: DbSubnets.Ref(),
   },
 });
 
-stack.addResource(Constant.DatabaseInstance, {
+stack.addResource('DatabaseInstance', {
   Type: 'AWS::RDS::DBInstance',
   Properties: {
-    DBInstanceClass: Fn_FindInEnvironmentMap(Ref(Constant.EnvironmentName), 'DbClass'),
+    DBInstanceClass: Fn_FindInEnvironmentMap(EnvironmentName.Ref(), 'DbClass'),
     Engine: 'mariadb',
-    MultiAZ: Ref(Constant.MultiAZ),
+    MultiAZ: MultiAZ.Ref(),
     PubliclyAccessible: true,
-    AllocatedStorage: Ref(Constant.AllocatedStorage),
-    MasterUsername: Ref(Constant.MasterUsername),
-    MasterUserPassword: Ref(Constant.MasterUserPassword),
-    DBSubnetGroupName: Ref(Constant.DbSubnetGroup),
+    AllocatedStorage: AllocatedStorage.Ref(),
+    MasterUsername: MasterUsername.Ref(),
+    MasterUserPassword: MasterUserPassword.Ref(),
+    DBSubnetGroupName: DbSubnetGroup.Ref(),
     VPCSecurityGroups: [
-      Ref(Constant.DbSecurityGroup), //
+      DbSecurityGroup.Ref(), //
     ],
   },
 });
