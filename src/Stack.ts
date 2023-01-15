@@ -1,5 +1,7 @@
 import { CloudFormation_Interface } from './CloudFormation_Interface.ts';
+import { Fn_FindInMap } from './Fn_FindInMap.ts';
 import { Parameter } from './Parameter.ts';
+import { Ref } from './Ref.ts';
 import { Resource } from './Resource.ts';
 
 // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html
@@ -76,12 +78,15 @@ export function Stack() {
       stack.Parameters[name] = parameter;
     },
 
-    // deno-lint-ignore no-explicit-any
-    setMapping<T extends Record<string, any>>(mapName: string, maps: T) {
+    setMapping<MapKey extends string, MapValue>(MapName: string, maps: Record<MapKey, MapValue>) {
       if (typeof stack.Mappings === 'undefined') {
         stack.Mappings = {};
       }
-      stack.Mappings[mapName] = maps;
+      stack.Mappings[MapName] = maps;
+
+      return (TopLevelKey: MapKey | Ref, SecondLevelKey: keyof MapValue) => {
+        return Fn_FindInMap<typeof maps>({ MapName, TopLevelKey, SecondLevelKey });
+      };
     },
 
     addResource(name: string, resource: Resource) {

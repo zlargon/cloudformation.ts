@@ -16,6 +16,7 @@ interface Fn_FindInMap_Props<M> {
   SecondLevelKey: keyof M[keyof M] | Ref | SelectedValue;
 }
 
+// https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-findinmap-enhancements.html
 // deno-lint-ignore no-explicit-any
 export const Fn_FindInMap = <M extends Record<string, any> = any>({
   MapName,

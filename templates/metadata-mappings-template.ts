@@ -1,5 +1,4 @@
 #!/usr/bin/env -S deno run
-import { Fn_FindInMap } from '../src/Fn_FindInMap.ts';
 import { Fn_Select } from '../src/Fn_Select.ts';
 import { Fn_Sub } from '../src/Fn_Sub.ts';
 import { Ref } from '../src/Ref.ts';
@@ -19,9 +18,6 @@ const Constant = {
   DbSubnets: 'DbSubnets',
   VpcId: 'VpcId',
   EnvironmentName: 'EnvironmentName',
-
-  // Mappings
-  EnvironmentMapping: 'EnvironmentOptions',
 
   // Resources
   Bastion: 'Bastion',
@@ -107,14 +103,7 @@ stack.addParameter(Constant.EnvironmentName, {
 // ==============================================
 // Mappings
 // ==============================================
-interface EnvironmentMapping {
-  prod: EnvironmentOptions;
-  test: EnvironmentOptions;
-}
-interface EnvironmentOptions {
-  DbClass: 'db.t2.small' | 'db.t2.micro';
-}
-stack.setMapping<EnvironmentMapping>(Constant.EnvironmentMapping, {
+const Fn_FindInEnvironmentMap = stack.setMapping('EnvironmentOptions', {
   prod: { DbClass: 'db.t2.small' },
   test: { DbClass: 'db.t2.micro' },
 });
@@ -194,11 +183,7 @@ stack.addResource(Constant.DbSubnetGroup, {
 stack.addResource(Constant.DatabaseInstance, {
   Type: 'AWS::RDS::DBInstance',
   Properties: {
-    DBInstanceClass: Fn_FindInMap<EnvironmentMapping>({
-      MapName: Constant.EnvironmentMapping,
-      TopLevelKey: Ref(Constant.EnvironmentName),
-      SecondLevelKey: 'DbClass',
-    }),
+    DBInstanceClass: Fn_FindInEnvironmentMap(Ref(Constant.EnvironmentName), 'DbClass'),
     Engine: 'mariadb',
     MultiAZ: Ref(Constant.MultiAZ),
     PubliclyAccessible: true,
