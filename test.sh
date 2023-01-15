@@ -16,12 +16,16 @@ templates=(
 
 function test_template {
   local test_file="$1"
-  deno run "templates/$test_file.ts" > "output/${test_file}.json"
-  cfn-flip "templates/$test_file.yaml" > "output/${test_file}-from-yaml.json"
-  echo "" >> "output/${test_file}-from-yaml.json" # add new line
+  deno run "templates/$test_file.ts" > "output/$test_file.ts.json"
+  cfn-flip "templates/$test_file.yaml" > "output/$test_file.yaml.json"
+  echo "" >> "output/$test_file.yaml.json" # add new line
 
-  cmp "output/${test_file}.json" "output/${test_file}-from-yaml.json" || { echo "❌ Test '${test_file}' failed"; return; }
-  echo "✅ Test '${test_file}' pass"
+  cmp "output/$test_file.ts.json" "output/$test_file.yaml.json" || {
+    echo "❌ Test '$test_file' failed"
+    diff -u "output/$test_file.yaml.json" "output/$test_file.ts.json" | diff-so-fancy
+    return
+  }
+  echo "✅ Test '$test_file' pass"
 }
 
 # create new output folder
