@@ -1,19 +1,6 @@
 #!/usr/bin/env -S deno run
 import { Fn_Select } from '../src/Fn_Select.ts';
-import { Ref } from '../src/Ref.ts';
 import { Stack } from '../src/Stack.ts';
-
-const Constant = {
-  // Parameters
-  SecurityGroupPorts: 'SecurityGroupPorts',
-  DbSubnets: 'DbSubnets',
-  VpcId: 'VpcId',
-
-  // Resources
-  WebServerSecurityGroup: 'WebServerSecurityGroup',
-  DbSecurityGroup: 'DbSecurityGroup',
-  DbSubnetGroup: 'DbSubnetGroup',
-};
 
 const stack = Stack();
 stack.setDescription('security groups');
@@ -21,18 +8,18 @@ stack.setDescription('security groups');
 // ========================================================
 // Parameters
 // ========================================================
-stack.addParameter(Constant.SecurityGroupPorts, {
+const SecurityGroupPorts = stack.addParameter('SecurityGroupPorts', {
   Type: 'List<Number>',
   Description: 'Port numbers as a list: <web-server-port>,<database-port>',
   Default: '80, 3306',
 });
 
-stack.addParameter(Constant.DbSubnets, {
+const DbSubnets = stack.addParameter('DbSubnets', {
   Type: 'List<AWS::EC2::Subnet::Id>',
   Description: 'DB subnet ids as a list: <subnet1>,<subnet2>,...',
 });
 
-stack.addParameter(Constant.VpcId, {
+const VpcId = stack.addParameter('VpcId', {
   Type: 'AWS::EC2::VPC::Id',
   Description: 'A valid VPC id in your AWS account',
 });
@@ -40,20 +27,20 @@ stack.addParameter(Constant.VpcId, {
 // ========================================================
 // Resources
 // ========================================================
-stack.addResource(Constant.WebServerSecurityGroup, {
+stack.addResource('WebServerSecurityGroup', {
   Type: 'AWS::EC2::SecurityGroup',
   Properties: {
-    VpcId: Ref(Constant.VpcId),
+    VpcId: VpcId.Ref(),
     GroupDescription: 'Web server instances security group',
     SecurityGroupIngress: [
       {
         CidrIp: '0.0.0.0/0',
         FromPort: Fn_Select({
-          Options: Ref(Constant.SecurityGroupPorts),
+          Options: SecurityGroupPorts.Ref(),
           Index: 0,
         }),
         ToPort: Fn_Select({
-          Options: Ref(Constant.SecurityGroupPorts),
+          Options: SecurityGroupPorts.Ref(),
           Index: 0,
         }),
         IpProtocol: 'tcp',
@@ -62,20 +49,20 @@ stack.addResource(Constant.WebServerSecurityGroup, {
   },
 });
 
-stack.addResource(Constant.DbSecurityGroup, {
+stack.addResource('DbSecurityGroup', {
   Type: 'AWS::EC2::SecurityGroup',
   Properties: {
-    VpcId: Ref(Constant.VpcId),
+    VpcId: VpcId.Ref(),
     GroupDescription: 'Database instances security group',
     SecurityGroupIngress: [
       {
         CidrIp: '0.0.0.0/0',
         FromPort: Fn_Select({
-          Options: Ref(Constant.SecurityGroupPorts),
+          Options: SecurityGroupPorts.Ref(),
           Index: 1,
         }),
         ToPort: Fn_Select({
-          Options: Ref(Constant.SecurityGroupPorts),
+          Options: SecurityGroupPorts.Ref(),
           Index: 1,
         }),
         IpProtocol: 'tcp',
@@ -84,11 +71,11 @@ stack.addResource(Constant.DbSecurityGroup, {
   },
 });
 
-stack.addResource(Constant.DbSubnetGroup, {
+stack.addResource('DbSubnetGroup', {
   Type: 'AWS::RDS::DBSubnetGroup',
   Properties: {
     DBSubnetGroupDescription: 'Subnets to launch db instances into',
-    SubnetIds: Ref(Constant.DbSubnets),
+    SubnetIds: DbSubnets.Ref(),
   },
 });
 
