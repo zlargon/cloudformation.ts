@@ -30,7 +30,20 @@ function getCloudFormationInterface(stack: Stack) {
   return stack.Metadata[type];
 }
 
+function createLogicalReference(LogicalNameSet: Set<string>, logicalName: string) {
+  if (LogicalNameSet.has(logicalName)) {
+    throw new Error(`logical name '${logicalName}' has been used.`);
+  }
+  LogicalNameSet.add(logicalName);
+
+  return {
+    Name: () => logicalName,
+    Ref: () => Ref(logicalName),
+  };
+}
+
 export function Stack() {
+  const LogicalNameSet = new Set<string>();
   const stack: Stack = {
     AWSTemplateFormatVersion: '2010-09-09',
     Description: undefined,
@@ -71,11 +84,13 @@ export function Stack() {
       },
     },
 
-    addParameter(name: string, parameter: Parameter) {
+    addParameter(logicalName: string, parameter: Parameter) {
       if (typeof stack.Parameters === 'undefined') {
         stack.Parameters = {};
       }
-      stack.Parameters[name] = parameter;
+      stack.Parameters[logicalName] = parameter;
+
+      return createLogicalReference(LogicalNameSet, logicalName);
     },
 
     setMapping<MapKey extends string, MapValue>(MapName: string, maps: Record<MapKey, MapValue>) {
@@ -89,8 +104,10 @@ export function Stack() {
       };
     },
 
-    addResource(name: string, resource: Resource) {
-      stack.Resources[name] = resource;
+    addResource(logicalName: string, resource: Resource) {
+      stack.Resources[logicalName] = resource;
+
+      return createLogicalReference(LogicalNameSet, logicalName);
     },
 
     json() {
