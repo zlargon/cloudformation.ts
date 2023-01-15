@@ -1,6 +1,7 @@
 import { CloudFormation_Interface } from './CloudFormation_Interface.ts';
 import { Condition } from './Conditions.ts';
 import { Fn_FindInMap } from './Fn_FindInMap.ts';
+import { Fn_GetAtt } from './Fn_GetAtt.ts';
 import { Output } from './Output.ts';
 import { Parameter } from './Parameter.ts';
 import { Ref } from './Ref.ts';
@@ -32,18 +33,6 @@ function getCloudFormationInterface(stack: Stack) {
     };
   }
   return stack.Metadata[type];
-}
-
-function createLogicalReference(LogicalNameSet: Set<string>, logicalName: string) {
-  if (LogicalNameSet.has(logicalName)) {
-    throw new Error(`logical name '${logicalName}' has been used.`);
-  }
-  LogicalNameSet.add(logicalName);
-
-  return {
-    Name: () => logicalName,
-    Ref: () => Ref(logicalName),
-  };
 }
 
 export function Stack() {
@@ -97,7 +86,15 @@ export function Stack() {
       }
       stack.Parameters[logicalName] = parameter;
 
-      return createLogicalReference(LogicalNameSet, logicalName);
+      if (LogicalNameSet.has(logicalName)) {
+        throw new Error(`logical name '${logicalName}' has been used.`);
+      }
+      LogicalNameSet.add(logicalName);
+
+      return {
+        Name: () => logicalName,
+        Ref: () => Ref(logicalName),
+      };
     },
 
     addMapping<MapKey extends string, MapValue>(MapName: string, maps: Record<MapKey, MapValue>) {
@@ -131,7 +128,18 @@ export function Stack() {
     addResource(logicalName: string, resource: Resource) {
       stack.Resources[logicalName] = resource;
 
-      return createLogicalReference(LogicalNameSet, logicalName);
+      if (LogicalNameSet.has(logicalName)) {
+        throw new Error(`logical name '${logicalName}' has been used.`);
+      }
+      LogicalNameSet.add(logicalName);
+
+      return {
+        Name: () => logicalName,
+        Ref: () => Ref(logicalName),
+        Attr: (attributeName: string) => {
+          return Fn_GetAtt(logicalName, attributeName);
+        },
+      };
     },
 
     addOutput(logicalName: string, output: Output) {

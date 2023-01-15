@@ -73,3 +73,6 @@ Outputs:
   MasterDbId:
     Value: !Ref MasterDbInstance
     Description: Master database instance identifier
+  MasterDbEndpoint:
+    Value: !GetAtt [MasterDbInstance, Endpoint.Address]
+    Description: The connection endpoint of the master database instance

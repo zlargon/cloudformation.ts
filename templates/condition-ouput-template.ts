@@ -111,4 +111,9 @@ stack.addOutput('MasterDbId', {
   Description: 'Master database instance identifier',
 });
 
+stack.addOutput('MasterDbEndpoint', {
+  Value: MasterDbInstance.Attr('Endpoint.Address'),
+  Description: 'The connection endpoint of the master database instance',
+});
+
 console.log(stack.json());
