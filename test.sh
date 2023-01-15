@@ -10,6 +10,7 @@ templates=(
   section2-activity-template
   database-stack-template
   security-groups-template
+  section3-activity-template
 )
 
 function test_template {

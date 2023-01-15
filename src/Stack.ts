@@ -22,7 +22,7 @@ export function Stack() {
       if (description.length > 1024) {
         throw new Error('must be a literal string that is between 0 and 1024 bytes in length');
       }
-      stack.Description = description;
+      stack.Description = description.replaceAll('\n', ' ');
     },
 
     addParameter(name: string, parameter: Parameter) {
