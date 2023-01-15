@@ -6,7 +6,6 @@ Metadata:
       - Label:
           default: Database Instance Settings
         Parameters:
-          - DbClass
           - MultiAZ
           - AllocatedStorage
           - MasterUsername
@@ -18,20 +17,10 @@ Metadata:
           - DbSubnets
           - SecurityGroupPorts
     ParameterLabels:
-      DbClass:
-        default: Database Instance Class
       AllocatedStorage:
         default: Allocated Storage Size
 
 Parameters:
-  DbClass:
-    Type: String
-    Description: RDS instance class
-    AllowedValues:
-      - db.t2.micro
-      - db.t2.small
-    ConstraintDescription: 'DbClass parameter can only have these values: db.t2.micro, db.t2.small'
-    Default: db.t2.micro
   MasterUsername:
     Type: String
     Description: Master username for the db instance
@@ -68,6 +57,20 @@ Parameters:
   VpcId:
     Type: AWS::EC2::VPC::Id
     Description: A valid VPC id in your AWS account
+  EnvironmentName:
+    Type: String
+    AllowedValues:
+      - prod
+      - test
+    Default: test
+
+Mappings:
+  EnvironmentOptions:
+    prod:
+      DbClass: db.t2.small
+    test:
+      DbClass: db.t2.micro
+
 Resources:
   Bastion:
     Type: AWS::EC2::Instance
@@ -115,7 +118,7 @@ Resources:
   DatabaseInstance:
     Type: AWS::RDS::DBInstance
     Properties:
-      DBInstanceClass: !Ref DbClass
+      DBInstanceClass: !FindInMap [EnvironmentOptions, !Ref EnvironmentName, DbClass]
       Engine: mariadb
       MultiAZ: !Ref MultiAZ
       PubliclyAccessible: true

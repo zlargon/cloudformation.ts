@@ -1,4 +1,5 @@
 #!/usr/bin/env -S deno run
+import { Fn_FindInMap } from '../src/Fn_FindInMap.ts';
 import { Fn_Select } from '../src/Fn_Select.ts';
 import { Fn_Sub } from '../src/Fn_Sub.ts';
 import { Ref } from '../src/Ref.ts';
@@ -10,7 +11,6 @@ stack.setDescription('Sample database stack for the Metadata and Mappings sectio
 
 const Constant = {
   // Parameters
-  DbClass: 'DbClass',
   MasterUsername: 'MasterUsername',
   MasterUserPassword: 'MasterUserPassword',
   MultiAZ: 'MultiAZ',
@@ -18,6 +18,10 @@ const Constant = {
   SecurityGroupPorts: 'SecurityGroupPorts',
   DbSubnets: 'DbSubnets',
   VpcId: 'VpcId',
+  EnvironmentName: 'EnvironmentName',
+
+  // Mappings
+  EnvironmentMapping: 'EnvironmentOptions',
 
   // Resources
   Bastion: 'Bastion',
@@ -31,7 +35,6 @@ const Constant = {
 // Metadata
 // ==============================================
 stack.metadata.addParameterGroup('Database Instance Settings', [
-  Constant.DbClass,
   Constant.MultiAZ,
   Constant.AllocatedStorage,
   Constant.MasterUsername,
@@ -46,18 +49,6 @@ stack.metadata.addParameterGroup('Network Settings', [
 // ==============================================
 // Parameters
 // ==============================================
-stack.metadata.setParameterLabel(Constant.DbClass, 'Database Instance Class');
-stack.addParameter(Constant.DbClass, {
-  Type: 'String',
-  Description: 'RDS instance class',
-  AllowedValues: [
-    'db.t2.micro', //
-    'db.t2.small',
-  ],
-  ConstraintDescription: 'DbClass parameter can only have these values: db.t2.micro, db.t2.small',
-  Default: 'db.t2.micro',
-});
-
 stack.addParameter(Constant.MasterUsername, {
   Type: 'String',
   Description: 'Master username for the db instance',
@@ -105,6 +96,27 @@ stack.addParameter(Constant.DbSubnets, {
 stack.addParameter(Constant.VpcId, {
   Type: 'AWS::EC2::VPC::Id',
   Description: 'A valid VPC id in your AWS account',
+});
+
+stack.addParameter(Constant.EnvironmentName, {
+  Type: 'String',
+  AllowedValues: ['prod', 'test'],
+  Default: 'test',
+});
+
+// ==============================================
+// Mappings
+// ==============================================
+interface EnvironmentMapping {
+  prod: EnvironmentOptions;
+  test: EnvironmentOptions;
+}
+interface EnvironmentOptions {
+  DbClass: 'db.t2.small' | 'db.t2.micro';
+}
+stack.setMapping<EnvironmentMapping>(Constant.EnvironmentMapping, {
+  prod: { DbClass: 'db.t2.small' },
+  test: { DbClass: 'db.t2.micro' },
 });
 
 // ==============================================
@@ -167,7 +179,11 @@ stack.addResource(Constant.DbSubnetGroup, {
 stack.addResource(Constant.DatabaseInstance, {
   Type: 'AWS::RDS::DBInstance',
   Properties: {
-    DBInstanceClass: Ref(Constant.DbClass),
+    DBInstanceClass: Fn_FindInMap<EnvironmentMapping>({
+      MapName: Constant.EnvironmentMapping,
+      TopLevelKey: Ref(Constant.EnvironmentName),
+      SecondLevelKey: 'DbClass',
+    }),
     Engine: 'mariadb',
     MultiAZ: Ref(Constant.MultiAZ),
     PubliclyAccessible: true,

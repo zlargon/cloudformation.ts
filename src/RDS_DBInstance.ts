@@ -1,6 +1,7 @@
 import { Ref } from './Ref.ts';
 import { ResourceAttributes } from './ResourceAttributes.ts';
 import { Tag } from './Tag.ts';
+import { Value } from './Value.ts';
 
 // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-dbinstance.html
 export interface RDS_DBInstance extends ResourceAttributes {
@@ -18,7 +19,7 @@ export interface RDS_DBInstance extends ResourceAttributes {
     CustomIAMInstanceProfile?: string;
     DBClusterIdentifier?: string;
     DBClusterSnapshotIdentifier?: string;
-    DBInstanceClass?: string | Ref;
+    DBInstanceClass?: Value<string>;
     DBInstanceIdentifier?: string;
     DBName?: string;
     DBParameterGroupName?: string;

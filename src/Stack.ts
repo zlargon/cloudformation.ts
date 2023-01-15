@@ -10,6 +10,7 @@ interface Stack {
     'AWS::CloudFormation::Interface'?: CloudFormation_Interface;
   };
   Parameters?: Record<string, Parameter>;
+  Mappings?: Record<string, Record<string, unknown>>;
   Resources: Record<string, Resource>;
 }
 
@@ -33,6 +34,7 @@ export function Stack() {
     Description: undefined,
     Metadata: undefined,
     Parameters: undefined,
+    Mappings: undefined,
     Resources: {},
   };
 
@@ -69,6 +71,14 @@ export function Stack() {
         stack.Parameters = {};
       }
       stack.Parameters[name] = parameter;
+    },
+
+    // deno-lint-ignore no-explicit-any
+    setMapping<T extends Record<string, any>>(mapName: string, maps: T) {
+      if (typeof stack.Mappings === 'undefined') {
+        stack.Mappings = {};
+      }
+      stack.Mappings[mapName] = maps;
     },
 
     addResource(name: string, resource: Resource) {
