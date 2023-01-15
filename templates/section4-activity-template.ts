@@ -2,7 +2,8 @@
 import { Stack } from '../src/Stack.ts';
 import { Tag } from '../src/Tag.ts';
 import { Fn_Select } from '../src/Fn_Select.ts';
-import { Fn_Sub } from '../src/Fn_Sub.ts';
+import { Fn_Format } from '../src/Fn_Format.ts';
+import { PseudoParameter } from '../src/PseudoParameter.ts';
 
 const stack = Stack();
 stack.setDescription(`
@@ -67,7 +68,10 @@ const Vpc = stack.addResource('Vpc', {
     EnableDnsSupport: true,
     EnableDnsHostnames: true,
     Tags: [
-      Tag('Name', Fn_Sub('${AWS::StackName}-vpc')), //
+      Tag(
+        'Name', //
+        Fn_Format('{{stackName}}-vpc', { stackName: PseudoParameter.StackName })
+      ),
     ],
   },
 });

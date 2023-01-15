@@ -8,6 +8,7 @@ export const Fn_Format = (
 ): string | Exclude<SubValue, string> => {
   const params = new Set(stringTemplate.match(/\{\{[A-Za-z0-9]+\}\}/g));
 
+  let hasPseudoParameter = false;
   for (const paramWithBracket of params) {
     const paramName = paramWithBracket.slice(2, -2); // remove {{ and }}
     if (!(paramName in keyValuePair)) {
@@ -20,6 +21,7 @@ export const Fn_Format = (
     if (typeof paramValue === 'string' && isValidPseudoParameter(paramValue)) {
       stringTemplate = stringTemplate.replaceAll(paramWithBracket, '${' + paramValue + '}');
       delete keyValuePair[paramName];
+      hasPseudoParameter = true;
       continue;
     }
 
@@ -34,10 +36,11 @@ export const Fn_Format = (
     stringTemplate = stringTemplate.replaceAll(paramWithBracket, '${' + paramName + '}');
   }
 
-  // no object values
-  if (Object.keys(keyValuePair).length === 0) {
+  // no pseudo parameter and no object values
+  const isKeyValuePairEmpty = Object.keys(keyValuePair).length === 0;
+  if (!hasPseudoParameter && isKeyValuePairEmpty) {
     return stringTemplate;
   }
 
-  return Fn_Sub(stringTemplate, keyValuePair);
+  return Fn_Sub(stringTemplate, isKeyValuePairEmpty ? undefined : keyValuePair);
 };
