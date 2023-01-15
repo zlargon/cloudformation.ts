@@ -6,6 +6,18 @@ Parameters:
     Description: EC2 instance type
     Default: t2.micro
 Resources:
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for web servers
+      SecurityGroupIngress:
+        - IpProtocol: 'tcp'
+          FromPort: 80
+          ToPort: 80
+          CidrIp: '0.0.0.0/0'
+      Tags:
+        - Key: Name
+          Value: Web server security group
   WebServerInstance:
     Type: AWS::EC2::Instance
     Properties:
@@ -32,18 +44,6 @@ Resources:
           Value: web-server-hello-hello-123-123
         - Key: Project
           Value: CloudFormation Step By Step
-  WebServerSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Security group for web servers
-      SecurityGroupIngress:
-        - IpProtocol: 'tcp'
-          FromPort: 80
-          ToPort: 80
-          CidrIp: '0.0.0.0/0'
-      Tags:
-        - Key: Name
-          Value: Web server security group
   SQSQueue:
     Type: AWS::SQS::Queue
     DependsOn: WebServerInstance
