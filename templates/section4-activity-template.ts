@@ -4,6 +4,7 @@ import { NameTag } from '../src/Tag.ts';
 import { Fn_Select } from '../src/Fn_Select.ts';
 import { Fn_Format } from '../src/Fn_Format.ts';
 import { PseudoParameter } from '../src/PseudoParameter.ts';
+import { Ref } from '../src/Ref.ts';
 
 const stack = Stack();
 stack.setDescription(`
@@ -28,11 +29,6 @@ const InstanceType = stack.addParameter('InstanceType', {
   Default: 't2.micro',
 });
 
-const ImageId = stack.addParameter('ImageId', {
-  Type: 'AWS::EC2::Image::Id',
-  Default: 'ami-0b5eea76982371e91',
-});
-
 const EbsVolumeSize = stack.addParameter('EbsVolumeSize', {
   Type: 'Number',
   Description: 'Volume size in GiB',
@@ -51,7 +47,14 @@ const VpcCidrBlocks = stack.addParameter('VpcCidrBlocks', {
 
 const SubnetAZ = stack.addParameter('SubnetAZ', {
   Type: 'AWS::EC2::AvailabilityZone::Name',
-  Default: 'us-east-1a',
+});
+
+// ==============================================
+// Mappings
+// ==============================================
+const Fn_FindInRegionImageMap = stack.addMapping('RegionImages', {
+  'eu-west-1': { ImageId: 'ami-0fe0b2cf0e1f25c8a' },
+  'us-east-1': { ImageId: 'ami-0b5eea76982371e91' },
 });
 
 // ==============================================
@@ -198,7 +201,7 @@ stack.addResource('WebServerInstance', {
   Properties: {
     InstanceType: InstanceType.Ref(), // t2.micro
     SubnetId: PublicSubnet.Ref(),
-    ImageId: ImageId.Ref(), // ami-0b5eea76982371e91
+    ImageId: Fn_FindInRegionImageMap(Ref(PseudoParameter.Region), 'ImageId'), // ami-0b5eea76982371e91
     KeyName: KeyPairName.Ref(),
     SecurityGroupIds: [WebServerSecurityGroup.Ref()],
     BlockDeviceMappings: [
@@ -213,5 +216,20 @@ stack.addResource('WebServerInstance', {
     Tags: [NameTag('Web Server')],
   },
 });
+
+// ==============================================
+// Metadata
+// ==============================================
+stack.metadata.addParameterGroup('Web Server Settings', [
+  InstanceType.Name(), //
+  EbsVolumeSize.Name(),
+  KeyPairName.Name(),
+]);
+stack.metadata.addParameterGroup('VPC Settings', [
+  VpcCidrBlocks.Name(), //
+  SubnetAZ.Name(),
+]);
+stack.metadata.addParameterLabel(SubnetAZ.Name(), 'Select an Availability Zone for the subnets');
+stack.metadata.addParameterLabel(KeyPairName.Name(), 'Select an EC2 key pair');
 
 console.log(stack.json());

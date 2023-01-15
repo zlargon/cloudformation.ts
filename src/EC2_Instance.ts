@@ -2,6 +2,7 @@ import { SelectedValue } from './Fn_Select.ts';
 import { Ref } from './Ref.ts';
 import { ResourceAttributes } from './ResourceAttributes.ts';
 import { Tag } from './Tag.ts';
+import { Value } from './Value.ts';
 
 // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-instance.html
 export interface EC2_Instance extends ResourceAttributes {
@@ -22,7 +23,7 @@ export interface EC2_Instance extends ResourceAttributes {
     HostId?: string | Ref;
     HostResourceGroupArn?: string;
     IamInstanceProfile?: string;
-    ImageId?: string | Ref;
+    ImageId?: Value;
     InstanceInitiatedShutdownBehavior?: 'stop' | 'terminate';
     InstanceType?: InstanceType | Ref;
     Ipv6AddressCount?: number;
