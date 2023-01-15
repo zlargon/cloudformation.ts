@@ -86,6 +86,7 @@ export function Stack() {
       }
       stack.Parameters[logicalName] = parameter;
 
+      // check duplicated parameter
       if (LogicalNameSet.has(logicalName)) {
         throw new Error(`logical name '${logicalName}' has been used.`);
       }
@@ -128,6 +129,7 @@ export function Stack() {
     addResource(logicalName: string, resource: Resource) {
       stack.Resources[logicalName] = resource;
 
+      // check duplicated resource
       if (LogicalNameSet.has(logicalName)) {
         throw new Error(`logical name '${logicalName}' has been used.`);
       }

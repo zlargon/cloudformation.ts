@@ -91,7 +91,7 @@ const MasterDbInstance = stack.addResource('MasterDbInstance', {
   },
 });
 
-stack.addResource('ReadReplica', {
+const ReadReplica = stack.addResource('ReadReplica', {
   Type: 'AWS::RDS::DBInstance',
   Condition: EnvironmentIsProduction.Condition(),
   Properties: {
@@ -114,6 +114,12 @@ stack.addOutput('MasterDbId', {
 stack.addOutput('MasterDbEndpoint', {
   Value: MasterDbInstance.Attr('Endpoint.Address'),
   Description: 'The connection endpoint of the master database instance',
+});
+
+stack.addOutput('ReadReplicaEndpoint', {
+  Value: ReadReplica.Attr('Endpoint.Address'),
+  Description: 'The connection endpoint for the read replica',
+  Condition: EnvironmentIsProduction.Condition(),
 });
 
 console.log(stack.json());
