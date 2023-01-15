@@ -1,5 +1,6 @@
 #!/usr/bin/env -S deno run
 import { Fn_Equals } from '../src/Conditions.ts';
+import { Fn_If } from '../src/Fn_If.ts';
 import { Fn_Sub } from '../src/Fn_Sub.ts';
 import { PseudoParameter } from '../src/PseudoParameter.ts';
 import { Ref } from '../src/Ref.ts';
@@ -43,10 +44,20 @@ const NewVolumeOption = stack.addParameter('NewVolumeOption', {
   Description: 'Whether to create and attach an EBS volume',
 });
 
+const AllowSshAccess = stack.addParameter('AllowSshAccess', {
+  Type: 'String',
+  AllowedValues: [
+    true, //
+    false,
+  ],
+  Description: 'Whether to allow SSH access to the web server',
+});
+
 // ==============================================
 // Conditions
 // ==============================================
 const NewVolumeOptionSelected = stack.addCondition('NewVolumeOptionSelected', Fn_Equals(NewVolumeOption.Ref(), true));
+const SshAccessAllowed = stack.addCondition('SshAccessAllowed', Fn_Equals(AllowSshAccess.Ref(), true));
 
 // ==============================================
 // Mappings
@@ -79,6 +90,7 @@ const HttpSecurityGroup = stack.addResource('HttpSecurityGroup', {
 
 const SshSecurityGroup = stack.addResource('SshSecurityGroup', {
   Type: 'AWS::EC2::SecurityGroup',
+  Condition: SshAccessAllowed.Condition(),
   Properties: {
     GroupDescription: 'Security group to allow SSH access',
     VpcId: VpcId.Ref(),
@@ -99,8 +111,17 @@ const WebServerInstance = stack.addResource('WebServerInstance', {
     InstanceType: 't2.micro',
     SubnetId: WebServerSubnet.Ref(),
     ImageId: Fn_FindInRegionImageMap(Ref(PseudoParameter.Region), 'ImageId'),
-    KeyName: KeyPairName.Ref(),
-    SecurityGroupIds: [HttpSecurityGroup.Ref(), SshSecurityGroup.Ref()],
+    KeyName: Fn_If(SshAccessAllowed.Condition(), {
+      Then: KeyPairName.Ref(),
+      Else: Ref(PseudoParameter.NoValue),
+    }),
+    SecurityGroupIds: [
+      HttpSecurityGroup.Ref(),
+      Fn_If(SshAccessAllowed.Condition(), {
+        Then: SshSecurityGroup.Ref(),
+        Else: Ref(PseudoParameter.NoValue),
+      }),
+    ],
     Tags: [NameTag(Fn_Sub('${AWS::StackName}-WebServer'))],
   },
 });

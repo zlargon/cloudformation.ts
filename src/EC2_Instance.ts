@@ -29,7 +29,7 @@ export interface EC2_Instance extends ResourceAttributes {
     Ipv6AddressCount?: number;
     Ipv6Addresses?: InstanceIpv6Address[];
     KernelId?: string | Ref;
-    KeyName?: string | Ref;
+    KeyName?: Value<string | Ref>;
     LaunchTemplate?: LaunchTemplateSpecification;
     LicenseSpecifications?: LicenseSpecification[];
     Monitoring?: boolean;
@@ -39,7 +39,7 @@ export interface EC2_Instance extends ResourceAttributes {
     PrivateIpAddress?: string;
     PropagateTagsToVolumeOnCreation?: boolean;
     RamdiskId?: string | Ref;
-    SecurityGroupIds?: (string | Ref)[];
+    SecurityGroupIds?: Value[];
     SecurityGroups?: string[];
     SourceDestCheck?: boolean;
     SsmAssociations?: SsmAssociation[];
