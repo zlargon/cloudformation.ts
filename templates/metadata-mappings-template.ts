@@ -28,8 +28,25 @@ const Constant = {
 };
 
 // ==============================================
+// Metadata
+// ==============================================
+stack.metadata.addParameterGroup('Database Instance Settings', [
+  Constant.DbClass,
+  Constant.MultiAZ,
+  Constant.AllocatedStorage,
+  Constant.MasterUsername,
+  Constant.MasterUserPassword,
+]);
+stack.metadata.addParameterGroup('Network Settings', [
+  Constant.VpcId, //
+  Constant.DbSubnets,
+  Constant.SecurityGroupPorts,
+]);
+
+// ==============================================
 // Parameters
 // ==============================================
+stack.metadata.setParameterLabel(Constant.DbClass, 'Database Instance Class');
 stack.addParameter(Constant.DbClass, {
   Type: 'String',
   Description: 'RDS instance class',
@@ -64,6 +81,7 @@ stack.addParameter(Constant.MultiAZ, {
   Default: false,
 });
 
+stack.metadata.setParameterLabel(Constant.AllocatedStorage, 'Allocated Storage Size');
 stack.addParameter(Constant.AllocatedStorage, {
   Type: 'Number',
   Description: 'Database storage size in GB',

@@ -1,5 +1,28 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Sample database stack for the Metadata and Mappings section
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Database Instance Settings
+        Parameters:
+          - DbClass
+          - MultiAZ
+          - AllocatedStorage
+          - MasterUsername
+          - MasterUserPassword
+      - Label:
+          default: Network Settings
+        Parameters:
+          - VpcId
+          - DbSubnets
+          - SecurityGroupPorts
+    ParameterLabels:
+      DbClass:
+        default: Database Instance Class
+      AllocatedStorage:
+        default: Allocated Storage Size
+
 Parameters:
   DbClass:
     Type: String
