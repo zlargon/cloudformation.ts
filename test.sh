@@ -14,6 +14,7 @@ templates=(
   metadata-mappings-template
   section4-activity-template
   condition-ouput-template
+  section5-activity-template
 )
 
 function test_template {

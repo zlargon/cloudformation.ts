@@ -1,0 +1,111 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  Section 5 Activity template.
+  It launches a web server EC2 instance with separate security groups for HTTP and SSH access.
+  It creates an EBS volume and attaches it to the EC2 instance.
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: VPC Settings
+        Parameters:
+          - VpcId
+          - WebServerSubnet
+      - Label:
+          default: Web Server Settings
+        Parameters:
+          - KeyPairName
+      - Label:
+          default: EBS Volume Settings
+        Parameters:
+          - EbsVolumeSize
+          - EbsVolumeAZ
+
+    ParameterLabels:
+      VpcId:
+        default: Select a VPC
+      WebServerSubnet:
+        default: Select a subnet for the web server
+      KeyPairName:
+        default: Select an EC2 key pair
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+  WebServerSubnet:
+    Type: AWS::EC2::Subnet::Id
+    Description: It should be in the same VPC.
+  EbsVolumeSize:
+    Type: Number
+    Description: Size in GiB
+    Default: 10
+  EbsVolumeAZ:
+    Type: AWS::EC2::AvailabilityZone::Name
+    Description: Availability Zone of the EBS volume
+  KeyPairName:
+    Type: AWS::EC2::KeyPair::KeyName
+
+Mappings:
+  RegionImages:
+    eu-west-1:
+      ImageId: ami-0fe0b2cf0e1f25c8a
+    us-east-1:
+      ImageId: ami-0b5eea76982371e91
+
+Resources:
+  # Security groups allowing access to different ports
+  HttpSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for HTTP access
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+
+  SshSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group to allow SSH access
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+
+  WebServerInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      SubnetId: !Ref WebServerSubnet
+      ImageId: !FindInMap [RegionImages, !Ref 'AWS::Region', ImageId]
+      KeyName: !Ref KeyPairName
+      SecurityGroupIds:
+        - !Ref HttpSecurityGroup
+        - !Ref SshSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-WebServer'
+
+  # EBS Volume that should be created in the same AZ
+  # with the WebServerInstance
+  EbsVolume:
+    Type: AWS::EC2::Volume
+    Properties:
+      AvailabilityZone: !Ref EbsVolumeAZ
+      VolumeType: gp2
+      Size: !Ref EbsVolumeSize
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-Volume'
+
+  VolumeAttachment:
+    Type: AWS::EC2::VolumeAttachment
+    Properties:
+      Device: /dev/sdf
+      InstanceId: !Ref WebServerInstance
+      VolumeId: !Ref EbsVolume

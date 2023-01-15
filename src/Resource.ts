@@ -6,6 +6,8 @@ import { EC2_RouteTable } from './EC2_RouteTable.ts';
 import { EC2_SecurityGroup } from './EC2_SecurityGroup.ts';
 import { EC2_Subnet } from './EC2_Subnet.ts';
 import { EC2_SubnetRouteTableAssociation } from './EC2_SubnetRouteTableAssociation.ts';
+import { EC2_Volume } from './EC2_Volume.ts';
+import { EC2_VolumeAttachment } from './EC2_VolumeAttachment.ts';
 import { EC2_VPC } from './EC2_VPC.ts';
 import { EC2_VPCGatewayAttachment } from './EC2_VPCGatewayAttachment.ts';
 import { RDS_DBInstance } from './RDS_DBInstance.ts';
@@ -26,5 +28,7 @@ export type Resource =
   | EC2_SecurityGroup
   | EC2_Subnet
   | EC2_SubnetRouteTableAssociation
+  | EC2_Volume
+  | EC2_VolumeAttachment
   | EC2_VPC
   | EC2_VPCGatewayAttachment;
