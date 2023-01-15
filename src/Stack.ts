@@ -1,6 +1,7 @@
 import { CloudFormation_Interface } from './CloudFormation_Interface.ts';
 import { Condition } from './Conditions.ts';
 import { Fn_FindInMap } from './Fn_FindInMap.ts';
+import { Output } from './Output.ts';
 import { Parameter } from './Parameter.ts';
 import { Ref } from './Ref.ts';
 import { Resource } from './Resource.ts';
@@ -16,6 +17,7 @@ interface Stack {
   Mappings?: Record<string, Record<string, unknown>>;
   Conditions?: Record<string, Condition>;
   Resources: Record<string, Resource>;
+  Outputs?: Record<string, Output>;
 }
 
 function getCloudFormationInterface(stack: Stack) {
@@ -55,6 +57,7 @@ export function Stack() {
     Mappings: undefined,
     Conditions: undefined,
     Resources: {},
+    Outputs: undefined,
   };
 
   return {
@@ -129,6 +132,19 @@ export function Stack() {
       stack.Resources[logicalName] = resource;
 
       return createLogicalReference(LogicalNameSet, logicalName);
+    },
+
+    addOutput(logicalName: string, output: Output) {
+      if (typeof stack.Outputs === 'undefined') {
+        stack.Outputs = {};
+      }
+      stack.Outputs[logicalName] = output;
+
+      // check duplicated outputs
+      if (LogicalNameSet.has(logicalName)) {
+        throw new Error(`logical name '${logicalName}' has been used.`);
+      }
+      LogicalNameSet.add(logicalName);
     },
 
     json() {

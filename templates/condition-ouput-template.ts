@@ -103,4 +103,12 @@ stack.addResource('ReadReplica', {
   },
 });
 
+// ========================================================
+// Outputs
+// ========================================================
+stack.addOutput('MasterDbId', {
+  Value: MasterDbInstance.Ref(),
+  Description: 'Master database instance identifier',
+});
+
 console.log(stack.json());

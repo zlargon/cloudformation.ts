@@ -68,3 +68,8 @@ Resources:
       PubliclyAccessible: true
       VPCSecurityGroups:
         - !Ref DbSecurityGroup
+
+Outputs:
+  MasterDbId:
+    Value: !Ref MasterDbInstance
+    Description: Master database instance identifier
