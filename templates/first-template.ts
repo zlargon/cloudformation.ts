@@ -3,6 +3,8 @@ import { Stack } from '../src/Stack.ts';
 import { Tag } from '../src/Tag.ts';
 import { Ref } from '../src/Ref.ts';
 import { Fn_Sub } from '../src/Fn_Sub.ts';
+import { PseudoParameter } from '../src/PseudoParameter.ts';
+import { Fn_Format } from '../src/Fn_Format.ts';
 
 const Constant = {
   InstanceType: 'InstanceType',
@@ -42,6 +44,29 @@ stack.addResource(Constant.WebServerInstance, {
         'Name2',
         Fn_Sub('${AWS::StackName}-web-server-${instanceType}-${str}-${num}', {
           instanceType: Ref(Constant.InstanceType),
+          str: 'hello',
+          num: 123,
+        })
+      ),
+      Tag(
+        'Name3',
+        Fn_Format('{{stackName}}-web-server-{{instanceType}}-{{str}}-{{num}}', {
+          stackName: PseudoParameter.StackName,
+          instanceType: Ref(Constant.InstanceType),
+          str: 'hello',
+          num: 123,
+        })
+      ),
+      Tag(
+        'Name4',
+        Fn_Format('web-server-{{str}}-{{num}}', {
+          str: 'hello',
+          num: 123,
+        })
+      ),
+      Tag(
+        'Name5',
+        Fn_Format('web-server-{{str}}-{{str}}-{{num}}-{{num}}', {
           str: 'hello',
           num: 123,
         })
