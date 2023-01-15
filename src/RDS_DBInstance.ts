@@ -59,7 +59,7 @@ export interface RDS_DBInstance extends ResourceAttributes {
     ReplicaMode?: 'open-read-only' | 'mounted';
     RestoreTime?: string;
     SourceDBInstanceAutomatedBackupsArn?: string;
-    SourceDBInstanceIdentifier?: string;
+    SourceDBInstanceIdentifier?: Value;
     SourceDbiResourceId?: string;
     SourceRegion?: string;
     StorageEncrypted?: boolean;
