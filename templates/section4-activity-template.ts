@@ -1,7 +1,6 @@
 #!/usr/bin/env -S deno run
 import { Stack } from '../src/Stack.ts';
 import { Tag } from '../src/Tag.ts';
-import { Ref } from '../src/Ref.ts';
 import { Fn_Select } from '../src/Fn_Select.ts';
 import { Fn_Sub } from '../src/Fn_Sub.ts';
 
@@ -15,34 +14,10 @@ and a security group attached to this EC2 instance.
 
 `);
 
-const Constant = {
-  // Parameters
-  InstanceType: 'InstanceType',
-  ImageId: 'ImageId',
-  EbsVolumeSize: 'EbsVolumeSize',
-  KeyPairName: 'KeyPairName',
-  VpcCidrBlocks: 'VpcCidrBlocks',
-  SubnetAZ: 'SubnetAZ',
-
-  // Resources
-  Vpc: 'Vpc',
-  PublicSubnet: 'PublicSubnet',
-  PrivateSubnet: 'PrivateSubnet',
-  PublicRouteTable: 'PublicRouteTable',
-  PrivateRouteTable: 'PrivateRouteTable',
-  InternetGateway: 'InternetGateway',
-  VpcGatewayAttachment: 'VpcGatewayAttachment',
-  InternetRoute: 'InternetRoute',
-  PublicSubnetRouteTableAssoc: 'PublicSubnetRouteTableAssoc',
-  PrivateSubnetRouteTableAssoc: 'PrivateSubnetRouteTableAssoc',
-  WebServerInstance: 'WebServerInstance',
-  WebServerSecurityGroup: 'WebServerSecurityGroup',
-};
-
 // ==============================================
 // Parameters
 // ==============================================
-stack.addParameter(Constant.InstanceType, {
+const InstanceType = stack.addParameter('InstanceType', {
   Type: 'String',
   AllowedValues: [
     't2.nano', //
@@ -52,28 +27,28 @@ stack.addParameter(Constant.InstanceType, {
   Default: 't2.micro',
 });
 
-stack.addParameter(Constant.ImageId, {
+const ImageId = stack.addParameter('ImageId', {
   Type: 'AWS::EC2::Image::Id',
   Default: 'ami-0b5eea76982371e91',
 });
 
-stack.addParameter(Constant.EbsVolumeSize, {
+const EbsVolumeSize = stack.addParameter('EbsVolumeSize', {
   Type: 'Number',
   Description: 'Volume size in GiB',
   Default: 10,
 });
 
-stack.addParameter(Constant.KeyPairName, {
+const KeyPairName = stack.addParameter('KeyPairName', {
   Type: 'AWS::EC2::KeyPair::KeyName',
 });
 
-stack.addParameter(Constant.VpcCidrBlocks, {
+const VpcCidrBlocks = stack.addParameter('VpcCidrBlocks', {
   Type: 'CommaDelimitedList',
   Description: 'vpc, public subnet, private subnet',
   Default: '10.0.0.0/16, 10.0.1.0/24, 10.0.2.0/24',
 });
 
-stack.addParameter(Constant.SubnetAZ, {
+const SubnetAZ = stack.addParameter('SubnetAZ', {
   Type: 'AWS::EC2::AvailabilityZone::Name',
   Default: 'us-east-1a',
 });
@@ -81,12 +56,12 @@ stack.addParameter(Constant.SubnetAZ, {
 // ==============================================
 // VPC
 // ==============================================
-stack.addResource(Constant.Vpc, {
+const Vpc = stack.addResource('Vpc', {
   Type: 'AWS::EC2::VPC',
   Description: 'Section 3 activity VPC',
   Properties: {
     CidrBlock: Fn_Select({
-      Options: Ref(Constant.VpcCidrBlocks), // 10.0.0.0/16
+      Options: VpcCidrBlocks.Ref(), // 10.0.0.0/16
       Index: 0,
     }),
     EnableDnsSupport: true,
@@ -100,30 +75,30 @@ stack.addResource(Constant.Vpc, {
 // ==============================================
 // Subnets
 // ==============================================
-stack.addResource(Constant.PublicSubnet, {
+const PublicSubnet = stack.addResource('PublicSubnet', {
   Type: 'AWS::EC2::Subnet',
   Properties: {
-    AvailabilityZone: Ref(Constant.SubnetAZ),
+    AvailabilityZone: SubnetAZ.Ref(),
     CidrBlock: Fn_Select({
-      Options: Ref(Constant.VpcCidrBlocks), // 10.0.0.0/24
+      Options: VpcCidrBlocks.Ref(), // 10.0.0.0/24
       Index: 1,
     }),
     MapPublicIpOnLaunch: true,
-    VpcId: Ref(Constant.Vpc),
+    VpcId: Vpc.Ref(),
     Tags: [
       Tag('Name', 'Public Subnet'), //
     ],
   },
 });
-stack.addResource(Constant.PrivateSubnet, {
+const PrivateSubnet = stack.addResource('PrivateSubnet', {
   Type: 'AWS::EC2::Subnet',
   Properties: {
-    AvailabilityZone: Ref(Constant.SubnetAZ),
+    AvailabilityZone: SubnetAZ.Ref(),
     CidrBlock: Fn_Select({
-      Options: Ref(Constant.VpcCidrBlocks), // 10.0.1.0/24
+      Options: VpcCidrBlocks.Ref(), // 10.0.1.0/24
       Index: 2,
     }),
-    VpcId: Ref(Constant.Vpc),
+    VpcId: Vpc.Ref(),
     Tags: [
       Tag('Name', 'Private Subnet'), //
     ],
@@ -133,19 +108,19 @@ stack.addResource(Constant.PrivateSubnet, {
 // ==============================================
 // Route tables
 // ==============================================
-stack.addResource(Constant.PublicRouteTable, {
+const PublicRouteTable = stack.addResource('PublicRouteTable', {
   Type: 'AWS::EC2::RouteTable',
   Properties: {
-    VpcId: Ref(Constant.Vpc),
+    VpcId: Vpc.Ref(),
     Tags: [
       Tag('Name', 'Public Route Table'), //
     ],
   },
 });
-stack.addResource(Constant.PrivateRouteTable, {
+const PrivateRouteTable = stack.addResource('PrivateRouteTable', {
   Type: 'AWS::EC2::RouteTable',
   Properties: {
-    VpcId: Ref(Constant.Vpc),
+    VpcId: Vpc.Ref(),
     Tags: [
       Tag('Name', 'Private Route Table'), //
     ],
@@ -155,22 +130,22 @@ stack.addResource(Constant.PrivateRouteTable, {
 // ==============================================
 // Internet route for the public route table
 // ==============================================
-stack.addResource(Constant.InternetGateway, {
+const InternetGateway = stack.addResource('InternetGateway', {
   Type: 'AWS::EC2::InternetGateway',
 });
-stack.addResource(Constant.VpcGatewayAttachment, {
+const VpcGatewayAttachment = stack.addResource('VpcGatewayAttachment', {
   Type: 'AWS::EC2::VPCGatewayAttachment',
   Properties: {
-    VpcId: Ref(Constant.Vpc),
-    InternetGatewayId: Ref(Constant.InternetGateway),
+    VpcId: Vpc.Ref(),
+    InternetGatewayId: InternetGateway.Ref(),
   },
 });
-stack.addResource(Constant.InternetRoute, {
+const InternetRoute = stack.addResource('InternetRoute', {
   Type: 'AWS::EC2::Route',
-  DependsOn: [Constant.VpcGatewayAttachment],
+  DependsOn: [VpcGatewayAttachment.Name()],
   Properties: {
-    RouteTableId: Ref(Constant.PublicRouteTable),
-    GatewayId: Ref(Constant.InternetGateway),
+    RouteTableId: PublicRouteTable.Ref(),
+    GatewayId: InternetGateway.Ref(),
     DestinationCidrBlock: '0.0.0.0/0',
   },
 });
@@ -178,53 +153,29 @@ stack.addResource(Constant.InternetRoute, {
 // ==============================================
 // Subnet - Route table associations
 // ==============================================
-stack.addResource(Constant.PublicSubnetRouteTableAssoc, {
+const PublicSubnetRouteTableAssoc = stack.addResource('PublicSubnetRouteTableAssoc', {
   Type: 'AWS::EC2::SubnetRouteTableAssociation',
   Properties: {
-    RouteTableId: Ref(Constant.PublicRouteTable),
-    SubnetId: Ref(Constant.PublicSubnet),
+    RouteTableId: PublicRouteTable.Ref(),
+    SubnetId: PublicSubnet.Ref(),
   },
 });
-stack.addResource(Constant.PrivateSubnetRouteTableAssoc, {
+stack.addResource('PrivateSubnetRouteTableAssoc', {
   Type: 'AWS::EC2::SubnetRouteTableAssociation',
   Properties: {
-    RouteTableId: Ref(Constant.PrivateRouteTable),
-    SubnetId: Ref(Constant.PrivateSubnet),
+    RouteTableId: PrivateRouteTable.Ref(),
+    SubnetId: PrivateSubnet.Ref(),
   },
 });
 
 // ==============================================
 // Web server and security group
 // ==============================================
-stack.addResource(Constant.WebServerInstance, {
-  Type: 'AWS::EC2::Instance',
-  DependsOn: [Constant.InternetRoute, Constant.PublicSubnetRouteTableAssoc],
-  Properties: {
-    InstanceType: Ref(Constant.InstanceType), // t2.micro
-    SubnetId: Ref(Constant.PublicSubnet),
-    ImageId: Ref(Constant.ImageId), // ami-0b5eea76982371e91
-    KeyName: Ref(Constant.KeyPairName),
-    SecurityGroupIds: [Ref(Constant.WebServerSecurityGroup)],
-    BlockDeviceMappings: [
-      {
-        DeviceName: '/dev/sdf',
-        Ebs: {
-          VolumeSize: Ref(Constant.EbsVolumeSize),
-          VolumeType: 'gp2',
-        },
-      },
-    ],
-    Tags: [
-      Tag('Name', 'Web Server'), //
-    ],
-  },
-});
-
-stack.addResource(Constant.WebServerSecurityGroup, {
+const WebServerSecurityGroup = stack.addResource('WebServerSecurityGroup', {
   Type: 'AWS::EC2::SecurityGroup',
   Properties: {
     GroupDescription: 'Activity security group',
-    VpcId: Ref(Constant.Vpc),
+    VpcId: Vpc.Ref(),
     SecurityGroupIngress: [
       {
         // HTTP rule
@@ -240,6 +191,30 @@ stack.addResource(Constant.WebServerSecurityGroup, {
         FromPort: 22,
         ToPort: 22,
       },
+    ],
+  },
+});
+
+stack.addResource('WebServerInstance', {
+  Type: 'AWS::EC2::Instance',
+  DependsOn: [InternetRoute.Name(), PublicSubnetRouteTableAssoc.Name()],
+  Properties: {
+    InstanceType: InstanceType.Ref(), // t2.micro
+    SubnetId: PublicSubnet.Ref(),
+    ImageId: ImageId.Ref(), // ami-0b5eea76982371e91
+    KeyName: KeyPairName.Ref(),
+    SecurityGroupIds: [WebServerSecurityGroup.Ref()],
+    BlockDeviceMappings: [
+      {
+        DeviceName: '/dev/sdf',
+        Ebs: {
+          VolumeSize: EbsVolumeSize.Ref(),
+          VolumeType: 'gp2',
+        },
+      },
+    ],
+    Tags: [
+      Tag('Name', 'Web Server'), //
     ],
   },
 });
