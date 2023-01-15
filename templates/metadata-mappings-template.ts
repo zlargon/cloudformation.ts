@@ -127,7 +127,10 @@ stack.addResource(Constant.Bastion, {
   Properties: {
     ImageId: 'ami-02a39bdb8e8ee056a',
     InstanceType: 't2.micro',
-    SubnetId: Fn_Select(0, Ref(Constant.DbSubnets)),
+    SubnetId: Fn_Select({
+      Options: Ref(Constant.DbSubnets),
+      Index: 0,
+    }),
     Tags: [
       Tag('Name', Fn_Sub('${AWS::StackName}-Bastion')), //
     ],
@@ -142,8 +145,14 @@ stack.addResource(Constant.WebServerSecurityGroup, {
     SecurityGroupIngress: [
       {
         CidrIp: '0.0.0.0/0',
-        FromPort: Fn_Select(0, Ref(Constant.SecurityGroupPorts)),
-        ToPort: Fn_Select(0, Ref(Constant.SecurityGroupPorts)),
+        FromPort: Fn_Select({
+          Options: Ref(Constant.SecurityGroupPorts),
+          Index: 0,
+        }),
+        ToPort: Fn_Select({
+          Options: Ref(Constant.SecurityGroupPorts),
+          Index: 0,
+        }),
         IpProtocol: 'tcp',
       },
     ],
@@ -159,8 +168,14 @@ stack.addResource(Constant.DbSecurityGroup, {
     SecurityGroupIngress: [
       {
         CidrIp: '0.0.0.0/0',
-        FromPort: Fn_Select(1, Ref(Constant.SecurityGroupPorts)),
-        ToPort: Fn_Select(1, Ref(Constant.SecurityGroupPorts)),
+        FromPort: Fn_Select({
+          Options: Ref(Constant.SecurityGroupPorts),
+          Index: 1,
+        }),
+        ToPort: Fn_Select({
+          Options: Ref(Constant.SecurityGroupPorts),
+          Index: 1,
+        }),
         IpProtocol: 'tcp',
       },
     ],

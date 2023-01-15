@@ -4,6 +4,11 @@ export interface SelectedValue<T = unknown> {
   'Fn::Select': [number, Ref | T[]];
 }
 
-export const Fn_Select = <T = unknown>(index: number, listOfObjects: Ref | T[]): SelectedValue<T> => {
-  return { 'Fn::Select': [index, listOfObjects] };
+interface Fn_Select_Props<T> {
+  Index: number;
+  Options: Ref | T[];
+}
+
+export const Fn_Select = <T = unknown>({ Index, Options }: Fn_Select_Props<T>): SelectedValue<T> => {
+  return { 'Fn::Select': [Index, Options] };
 };

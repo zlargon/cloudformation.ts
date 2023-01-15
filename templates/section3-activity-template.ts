@@ -81,7 +81,10 @@ stack.addResource(Constant.Vpc, {
   Type: 'AWS::EC2::VPC',
   Description: 'Section 3 activity VPC',
   Properties: {
-    CidrBlock: Fn_Select(0, Ref(Constant.VpcCidrBlocks)), // 10.0.0.0/16
+    CidrBlock: Fn_Select({
+      Options: Ref(Constant.VpcCidrBlocks), // 10.0.0.0/16
+      Index: 0,
+    }),
     EnableDnsSupport: true,
     EnableDnsHostnames: true,
     Tags: [
@@ -97,7 +100,10 @@ stack.addResource(Constant.PublicSubnet, {
   Type: 'AWS::EC2::Subnet',
   Properties: {
     AvailabilityZone: Ref(Constant.SubnetAZ),
-    CidrBlock: Fn_Select(1, Ref(Constant.VpcCidrBlocks)), // 10.0.0.0/24
+    CidrBlock: Fn_Select({
+      Options: Ref(Constant.VpcCidrBlocks), // 10.0.0.0/24
+      Index: 1,
+    }),
     MapPublicIpOnLaunch: true,
     VpcId: Ref(Constant.Vpc),
     Tags: [
@@ -109,7 +115,10 @@ stack.addResource(Constant.PrivateSubnet, {
   Type: 'AWS::EC2::Subnet',
   Properties: {
     AvailabilityZone: Ref(Constant.SubnetAZ),
-    CidrBlock: Fn_Select(2, Ref(Constant.VpcCidrBlocks)), // 10.0.1.0/24
+    CidrBlock: Fn_Select({
+      Options: Ref(Constant.VpcCidrBlocks), // 10.0.1.0/24
+      Index: 2,
+    }),
     VpcId: Ref(Constant.Vpc),
     Tags: [
       Tag('Name', 'Private Subnet'), //

@@ -48,8 +48,14 @@ stack.addResource(Constant.WebServerSecurityGroup, {
     SecurityGroupIngress: [
       {
         CidrIp: '0.0.0.0/0',
-        FromPort: Fn_Select(0, Ref(Constant.SecurityGroupPorts)),
-        ToPort: Fn_Select(0, Ref(Constant.SecurityGroupPorts)),
+        FromPort: Fn_Select({
+          Options: Ref(Constant.SecurityGroupPorts),
+          Index: 0,
+        }),
+        ToPort: Fn_Select({
+          Options: Ref(Constant.SecurityGroupPorts),
+          Index: 0,
+        }),
         IpProtocol: 'tcp',
       },
     ],
@@ -64,8 +70,14 @@ stack.addResource(Constant.DbSecurityGroup, {
     SecurityGroupIngress: [
       {
         CidrIp: '0.0.0.0/0',
-        FromPort: Fn_Select(1, Ref(Constant.SecurityGroupPorts)),
-        ToPort: Fn_Select(1, Ref(Constant.SecurityGroupPorts)),
+        FromPort: Fn_Select({
+          Options: Ref(Constant.SecurityGroupPorts),
+          Index: 1,
+        }),
+        ToPort: Fn_Select({
+          Options: Ref(Constant.SecurityGroupPorts),
+          Index: 1,
+        }),
         IpProtocol: 'tcp',
       },
     ],
