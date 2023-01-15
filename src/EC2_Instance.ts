@@ -1,3 +1,4 @@
+import { SelectedValue } from './Fn_Select.ts';
 import { Ref } from './Ref.ts';
 import { ResourceAttributes } from './ResourceAttributes.ts';
 import { Tag } from './Tag.ts';
@@ -41,7 +42,7 @@ export interface EC2_Instance extends ResourceAttributes {
     SecurityGroups?: string[];
     SourceDestCheck?: boolean;
     SsmAssociations?: SsmAssociation[];
-    SubnetId?: string | Ref;
+    SubnetId?: string | Ref | SelectedValue;
     Tags?: Tag[];
     Tenancy?: string;
     UserData?: string;

@@ -11,6 +11,7 @@ templates=(
   database-stack-template
   security-groups-template
   section3-activity-template
+  metadata-mappings-template
 )
 
 function test_template {

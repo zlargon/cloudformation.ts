@@ -38,7 +38,7 @@ export interface Parameter {
     | SsmParameter;
 
   AllowedPattern?: string;
-  AllowedValues?: string[];
+  AllowedValues?: unknown[];
   ConstraintDescription?: string;
   Default?: unknown;
   Description?: string;
