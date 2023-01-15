@@ -75,7 +75,7 @@ Resources:
   Bastion:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-02a39bdb8e8ee056a
+      ImageId: ami-0b5eea76982371e91
       InstanceType: t2.micro
       SubnetId: !Select [0, !Ref DbSubnets]
       Tags:

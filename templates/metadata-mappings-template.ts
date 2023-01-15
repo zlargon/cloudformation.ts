@@ -125,7 +125,7 @@ stack.setMapping<EnvironmentMapping>(Constant.EnvironmentMapping, {
 stack.addResource(Constant.Bastion, {
   Type: 'AWS::EC2::Instance',
   Properties: {
-    ImageId: 'ami-02a39bdb8e8ee056a',
+    ImageId: 'ami-0b5eea76982371e91',
     InstanceType: 't2.micro',
     SubnetId: Fn_Select({
       Options: Ref(Constant.DbSubnets),
