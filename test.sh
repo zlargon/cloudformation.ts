@@ -15,6 +15,7 @@ templates=(
   section4-activity-template
   condition-ouput-template
   section5-activity-template
+  change-sets-template
 )
 
 function test_template {
