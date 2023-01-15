@@ -40,10 +40,13 @@ export function Stack() {
 
   return {
     setDescription(description: string) {
+      // convert to single line, and trim the leading and trailing spaces
+      description = description.replaceAll('\n', ' ').trim();
+
       if (description.length > 1024) {
         throw new Error('must be a literal string that is between 0 and 1024 bytes in length');
       }
-      stack.Description = description.replaceAll('\n', ' ');
+      stack.Description = description;
     },
 
     metadata: {

@@ -6,10 +6,14 @@ import { Fn_Select } from '../src/Fn_Select.ts';
 import { Fn_Sub } from '../src/Fn_Sub.ts';
 
 const stack = Stack();
-stack.setDescription(`Section 3 Activity template.
+stack.setDescription(`
+
+Section 3 Activity template.
 It launches a VPC with public and private subnets,
 a web server EC2 instance in the public subnet
-and a security group attached to this EC2 instance.`);
+and a security group attached to this EC2 instance.
+
+`);
 
 const Constant = {
   // Parameters
