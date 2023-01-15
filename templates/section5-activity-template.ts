@@ -1,4 +1,5 @@
 #!/usr/bin/env -S deno run
+import { Fn_Equals } from '../src/Conditions.ts';
 import { Fn_Sub } from '../src/Fn_Sub.ts';
 import { PseudoParameter } from '../src/PseudoParameter.ts';
 import { Ref } from '../src/Ref.ts';
@@ -29,14 +30,23 @@ const EbsVolumeSize = stack.addParameter('EbsVolumeSize', {
   Default: 10,
 });
 
-const EbsVolumeAZ = stack.addParameter('EbsVolumeAZ', {
-  Type: 'AWS::EC2::AvailabilityZone::Name',
-  Description: 'Availability Zone of the EBS volume',
-});
-
 const KeyPairName = stack.addParameter('KeyPairName', {
   Type: 'AWS::EC2::KeyPair::KeyName',
 });
+
+const NewVolumeOption = stack.addParameter('NewVolumeOption', {
+  Type: 'String',
+  AllowedValues: [
+    true, //
+    false,
+  ],
+  Description: 'Whether to create and attach an EBS volume',
+});
+
+// ==============================================
+// Conditions
+// ==============================================
+const NewVolumeOptionSelected = stack.addCondition('NewVolumeOptionSelected', Fn_Equals(NewVolumeOption.Ref(), true));
 
 // ==============================================
 // Mappings
@@ -98,8 +108,9 @@ const WebServerInstance = stack.addResource('WebServerInstance', {
 // EBS Volume that should be created in the same AZ with the WebServerInstance
 const EbsVolume = stack.addResource('EbsVolume', {
   Type: 'AWS::EC2::Volume',
+  Condition: NewVolumeOptionSelected.Condition(),
   Properties: {
-    AvailabilityZone: EbsVolumeAZ.Ref(),
+    AvailabilityZone: WebServerInstance.Attr('AvailabilityZone'),
     VolumeType: 'gp2',
     Size: EbsVolumeSize.Ref(),
     Tags: [NameTag(Fn_Sub('${AWS::StackName}-Volume'))],
@@ -108,6 +119,7 @@ const EbsVolume = stack.addResource('EbsVolume', {
 
 stack.addResource('VolumeAttachment', {
   Type: 'AWS::EC2::VolumeAttachment',
+  Condition: NewVolumeOptionSelected.Condition(),
   Properties: {
     Device: '/dev/sdf',
     InstanceId: WebServerInstance.Ref(),
@@ -127,10 +139,24 @@ stack.metadata.addParameterGroup('Web Server Settings', [
 ]);
 stack.metadata.addParameterGroup('EBS Volume Settings', [
   EbsVolumeSize.Name(), //
-  EbsVolumeAZ.Name(),
 ]);
 stack.metadata.addParameterLabel(VpcId.Name(), 'Select a VPC');
 stack.metadata.addParameterLabel(WebServerSubnet.Name(), 'Select a subnet for the web server');
 stack.metadata.addParameterLabel(KeyPairName.Name(), 'Select an EC2 key pair');
+
+// ==============================================
+// Outputs
+// ==============================================
+stack.addOutput('WebServerInstanceId', {
+  Value: WebServerInstance.Ref(),
+});
+stack.addOutput('WebServerPublicDns', {
+  Value: WebServerInstance.Attr('PublicDnsName'),
+  Description: 'The public DNS name of the web server',
+});
+stack.addOutput('EbsVolumeId', {
+  Value: EbsVolume.Ref(),
+  Condition: NewVolumeOptionSelected.Condition(),
+});
 
 console.log(stack.json());
