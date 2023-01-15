@@ -75,7 +75,7 @@ export function Stack() {
           Parameters: parameters,
         });
       },
-      setParameterLabel(parameterLogicalId: string, label: string) {
+      addParameterLabel(parameterLogicalId: string, label: string) {
         const metadata = getCloudFormationInterface(stack);
         if (typeof metadata.ParameterLabels === 'undefined') {
           metadata.ParameterLabels = {};
@@ -93,7 +93,7 @@ export function Stack() {
       return createLogicalReference(LogicalNameSet, logicalName);
     },
 
-    setMapping<MapKey extends string, MapValue>(MapName: string, maps: Record<MapKey, MapValue>) {
+    addMapping<MapKey extends string, MapValue>(MapName: string, maps: Record<MapKey, MapValue>) {
       if (typeof stack.Mappings === 'undefined') {
         stack.Mappings = {};
       }

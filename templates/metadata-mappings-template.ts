@@ -41,7 +41,7 @@ const AllocatedStorage = stack.addParameter('AllocatedStorage', {
   ConstraintDescription: 'AllocatedStorage parameter value should be between 8 and 20.',
   Default: 8,
 });
-stack.metadata.setParameterLabel(AllocatedStorage.Name(), 'Allocated Storage Size');
+stack.metadata.addParameterLabel(AllocatedStorage.Name(), 'Allocated Storage Size');
 
 const SecurityGroupPorts = stack.addParameter('SecurityGroupPorts', {
   Type: 'List<Number>',
@@ -83,7 +83,7 @@ stack.metadata.addParameterGroup('Network Settings', [
 // ==============================================
 // Mappings
 // ==============================================
-const Fn_FindInEnvironmentMap = stack.setMapping('EnvironmentOptions', {
+const Fn_FindInEnvironmentMap = stack.addMapping('EnvironmentOptions', {
   prod: { DbClass: 'db.t2.small' },
   test: { DbClass: 'db.t2.micro' },
 });
