@@ -47,7 +47,7 @@ Resources:
   MasterDbInstance:
     Type: AWS::RDS::DBInstance
     Properties:
-      DBInstanceClass: db.t2.micro
+      DBInstanceClass: !If [EnvironmentIsProduction, db.t2.small, db.t2.micro]
       Engine: mysql
       MultiAZ: false
       PubliclyAccessible: true

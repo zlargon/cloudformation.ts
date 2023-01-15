@@ -1,5 +1,6 @@
 #!/usr/bin/env -S deno run
 import { Fn_Equals } from '../src/Conditions.ts';
+import { Fn_If } from '../src/Fn_If.ts';
 import { Stack } from '../src/Stack.ts';
 
 // create stack
@@ -75,7 +76,10 @@ const DbSubnetGroup = stack.addResource('DbSubnetGroup', {
 const MasterDbInstance = stack.addResource('MasterDbInstance', {
   Type: 'AWS::RDS::DBInstance',
   Properties: {
-    DBInstanceClass: 'db.t2.micro',
+    DBInstanceClass: Fn_If(EnvironmentIsProduction.Condition(), {
+      Then: 'db.t2.small',
+      Else: 'db.t2.micro',
+    }),
     Engine: 'mysql',
     MultiAZ: false,
     PubliclyAccessible: true,
