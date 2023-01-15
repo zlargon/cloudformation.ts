@@ -1,20 +1,5 @@
 #!/usr/bin/env -S deno run
-import { Ref } from '../src/Ref.ts';
 import { Stack } from '../src/Stack.ts';
-
-const Constant = {
-  // Parameters
-  DbClass: 'DbClass',
-  MasterUsername: 'MasterUsername',
-  MasterUserPassword: 'MasterUserPassword',
-  MultiAZ: 'MultiAZ',
-  AllocatedStorage: 'AllocatedStorage',
-
-  // Resources
-  DbSecurityGroup: 'DbSecurityGroup',
-  DbSubnetGroup: 'DbSubnetGroup',
-  DatabaseInstance: 'DatabaseInstance',
-};
 
 const stack = Stack();
 stack.setDescription('Sample database stack for the Parameters section');
@@ -22,7 +7,7 @@ stack.setDescription('Sample database stack for the Parameters section');
 // ========================================================
 // Parameters
 // ========================================================
-stack.addParameter(Constant.DbClass, {
+const DbClass = stack.addParameter('DbClass', {
   Type: 'String',
   Description: 'RDS instance class',
   AllowedValues: ['db.t2.micro', 'db.t2.small'],
@@ -30,7 +15,7 @@ stack.addParameter(Constant.DbClass, {
   Default: 'db.t2.micro',
 });
 
-stack.addParameter(Constant.MasterUsername, {
+const MasterUsername = stack.addParameter('MasterUsername', {
   Type: 'String',
   Description: 'Master username for the db instance',
   MaxLength: 10,
@@ -38,14 +23,14 @@ stack.addParameter(Constant.MasterUsername, {
   AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*',
 });
 
-stack.addParameter(Constant.MasterUserPassword, {
+const MasterUserPassword = stack.addParameter('MasterUserPassword', {
   Type: 'String',
   Description: 'Master user password for the db instance',
   MinLength: 8,
   NoEcho: true,
 });
 
-stack.addParameter(Constant.MultiAZ, {
+const MultiAZ = stack.addParameter('MultiAZ', {
   Type: 'String',
   Description: 'Enable Multi-AZ?',
   AllowedValues: ['true', 'false'],
@@ -53,7 +38,7 @@ stack.addParameter(Constant.MultiAZ, {
   Default: 'false',
 });
 
-stack.addParameter(Constant.AllocatedStorage, {
+const AllocatedStorage = stack.addParameter('AllocatedStorage', {
   Type: 'Number',
   Description: 'Database storage size in GB',
   MinValue: 8,
@@ -65,7 +50,7 @@ stack.addParameter(Constant.AllocatedStorage, {
 // ========================================================
 // Resources
 // ========================================================
-stack.addResource(Constant.DbSecurityGroup, {
+const DbSecurityGroup = stack.addResource('DbSecurityGroup', {
   Type: 'AWS::EC2::SecurityGroup',
   Properties: {
     // Note: Please replace the value of VpcId property with the VPC id of your default VPC
@@ -82,7 +67,7 @@ stack.addResource(Constant.DbSecurityGroup, {
   },
 });
 
-stack.addResource(Constant.DbSubnetGroup, {
+const DbSubnetGroup = stack.addResource('DbSubnetGroup', {
   Type: 'AWS::RDS::DBSubnetGroup',
   Properties: {
     DBSubnetGroupDescription: 'Subnets to launch db instances into',
@@ -99,19 +84,19 @@ stack.addResource(Constant.DbSubnetGroup, {
 });
 
 // mysql -u dbadmin -p12345678 -h xxxx.xxxx.us-east-1.rds.amazonaws.com
-stack.addResource(Constant.DatabaseInstance, {
+stack.addResource('DatabaseInstance', {
   Type: 'AWS::RDS::DBInstance',
   Properties: {
-    DBInstanceClass: Ref(Constant.DbClass),
+    DBInstanceClass: DbClass.Ref(),
     Engine: 'mysql',
-    MultiAZ: Ref(Constant.MultiAZ),
+    MultiAZ: MultiAZ.Ref(),
     PubliclyAccessible: true,
-    AllocatedStorage: Ref(Constant.AllocatedStorage),
-    MasterUsername: Ref(Constant.MasterUsername),
-    MasterUserPassword: Ref(Constant.MasterUserPassword),
-    DBSubnetGroupName: Ref(Constant.DbSubnetGroup),
+    AllocatedStorage: AllocatedStorage.Ref(),
+    MasterUsername: MasterUsername.Ref(),
+    MasterUserPassword: MasterUserPassword.Ref(),
+    DBSubnetGroupName: DbSubnetGroup.Ref(),
     VPCSecurityGroups: [
-      Ref(Constant.DbSecurityGroup), //
+      DbSecurityGroup.Ref(), //
     ],
   },
 });
