@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run
 import { Stack } from '../src/Stack.ts';
-import { Tag } from '../src/Tag.ts';
+import { NameTag, Tag } from '../src/Tag.ts';
 import { Fn_Sub } from '../src/Fn_Sub.ts';
 import { PseudoParameter } from '../src/PseudoParameter.ts';
 import { Fn_Format } from '../src/Fn_Format.ts';
@@ -35,9 +35,7 @@ const WebServerSecurityGroup = stack.addResource('WebServerSecurityGroup', {
         CidrIp: '0.0.0.0/0',
       },
     ],
-    Tags: [
-      Tag('Name', 'Web server security group'), //
-    ],
+    Tags: [NameTag('Web server security group')],
   },
 });
 
@@ -51,7 +49,7 @@ const WebServerInstance = stack.addResource('WebServerInstance', {
       WebServerSecurityGroup.Ref(), //
     ],
     Tags: [
-      Tag('Name', Fn_Sub('${AWS::StackName}-web-server')),
+      NameTag(Fn_Sub('${AWS::StackName}-web-server')),
       Tag(
         'Name2',
         Fn_Sub('${AWS::StackName}-web-server-${instanceType}-${str}-${num}', {

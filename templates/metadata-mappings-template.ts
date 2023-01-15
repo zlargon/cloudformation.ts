@@ -3,7 +3,7 @@ import { Fn_Format } from '../src/Fn_Format.ts';
 import { Fn_Select } from '../src/Fn_Select.ts';
 import { PseudoParameter } from '../src/PseudoParameter.ts';
 import { Stack } from '../src/Stack.ts';
-import { Tag } from '../src/Tag.ts';
+import { NameTag } from '../src/Tag.ts';
 
 const stack = Stack();
 stack.setDescription('Sample database stack for the Metadata and Mappings section');
@@ -102,9 +102,10 @@ stack.addResource('Bastion', {
       Index: 0,
     }),
     Tags: [
-      Tag(
-        'Name', //
-        Fn_Format('{{stackName}}-Bastion', { stackName: PseudoParameter.StackName })
+      NameTag(
+        Fn_Format('{{stackName}}-Bastion', {
+          stackName: PseudoParameter.StackName,
+        })
       ),
     ],
   },

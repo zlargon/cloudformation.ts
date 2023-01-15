@@ -9,3 +9,7 @@ export interface Tag {
 export const Tag = (Key: string, Value: string | SubValue): Tag => {
   return { Key, Value };
 };
+
+export const NameTag = (Value: string | SubValue): Tag => {
+  return Tag('Name', Value);
+};

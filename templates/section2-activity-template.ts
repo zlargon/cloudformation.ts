@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run
 import { Stack } from '../src/Stack.ts';
-import { Tag } from '../src/Tag.ts';
+import { NameTag } from '../src/Tag.ts';
 import { Ref } from '../src/Ref.ts';
 
 const Constant = {
@@ -24,9 +24,7 @@ stack.addResource(Constant.ActivityVpc, {
   Description: 'Section 2 activity VPC definition',
   Properties: {
     CidrBlock: '10.0.0.0/16',
-    Tags: [
-      Tag('Name', 'Section2ActivityVPC'), //
-    ],
+    Tags: [NameTag('Section2ActivityVPC')],
   },
 });
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run
 import { Stack } from '../src/Stack.ts';
-import { Tag } from '../src/Tag.ts';
+import { NameTag } from '../src/Tag.ts';
 import { Fn_Select } from '../src/Fn_Select.ts';
 import { Fn_Format } from '../src/Fn_Format.ts';
 import { PseudoParameter } from '../src/PseudoParameter.ts';
@@ -68,9 +68,10 @@ const Vpc = stack.addResource('Vpc', {
     EnableDnsSupport: true,
     EnableDnsHostnames: true,
     Tags: [
-      Tag(
-        'Name', //
-        Fn_Format('{{stackName}}-vpc', { stackName: PseudoParameter.StackName })
+      NameTag(
+        Fn_Format('{{stackName}}-vpc', {
+          stackName: PseudoParameter.StackName,
+        })
       ),
     ],
   },
@@ -89,9 +90,7 @@ const PublicSubnet = stack.addResource('PublicSubnet', {
     }),
     MapPublicIpOnLaunch: true,
     VpcId: Vpc.Ref(),
-    Tags: [
-      Tag('Name', 'Public Subnet'), //
-    ],
+    Tags: [NameTag('Public Subnet')],
   },
 });
 const PrivateSubnet = stack.addResource('PrivateSubnet', {
@@ -103,9 +102,7 @@ const PrivateSubnet = stack.addResource('PrivateSubnet', {
       Index: 2,
     }),
     VpcId: Vpc.Ref(),
-    Tags: [
-      Tag('Name', 'Private Subnet'), //
-    ],
+    Tags: [NameTag('Private Subnet')],
   },
 });
 
@@ -116,18 +113,14 @@ const PublicRouteTable = stack.addResource('PublicRouteTable', {
   Type: 'AWS::EC2::RouteTable',
   Properties: {
     VpcId: Vpc.Ref(),
-    Tags: [
-      Tag('Name', 'Public Route Table'), //
-    ],
+    Tags: [NameTag('Public Route Table')],
   },
 });
 const PrivateRouteTable = stack.addResource('PrivateRouteTable', {
   Type: 'AWS::EC2::RouteTable',
   Properties: {
     VpcId: Vpc.Ref(),
-    Tags: [
-      Tag('Name', 'Private Route Table'), //
-    ],
+    Tags: [NameTag('Private Route Table')],
   },
 });
 
@@ -217,9 +210,7 @@ stack.addResource('WebServerInstance', {
         },
       },
     ],
-    Tags: [
-      Tag('Name', 'Web Server'), //
-    ],
+    Tags: [NameTag('Web Server')],
   },
 });
 
