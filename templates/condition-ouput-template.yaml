@@ -19,6 +19,12 @@ Parameters:
   VpcId:
     Type: AWS::EC2::VPC::Id
     Description: A valid VPC id in your AWS account
+  Environment:
+    Type: String
+    AllowedValues: [test, production]
+
+Conditions:
+  EnvironmentIsProduction: !Equals [!Ref Environment, production]
 
 Resources:
   DbSecurityGroup:
@@ -54,6 +60,7 @@ Resources:
 
   ReadReplica:
     Type: AWS::RDS::DBInstance
+    Condition: EnvironmentIsProduction
     Properties:
       SourceDBInstanceIdentifier: !Ref MasterDbInstance
       DBInstanceClass: db.t2.micro

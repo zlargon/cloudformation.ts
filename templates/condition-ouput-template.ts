@@ -1,4 +1,5 @@
 #!/usr/bin/env -S deno run
+import { Fn_Equals } from '../src/Conditions.ts';
 import { Stack } from '../src/Stack.ts';
 
 // create stack
@@ -20,6 +21,14 @@ const VpcId = stack.addParameter('VpcId', {
   Description: 'A valid VPC id in your AWS account',
 });
 
+const Environment = stack.addParameter('Environment', {
+  Type: 'String',
+  AllowedValues: [
+    'test', //
+    'production',
+  ],
+});
+
 // ========================================================
 // Metadata
 // ========================================================
@@ -27,6 +36,14 @@ stack.metadata.addParameterGroup('Network Settings', [
   VpcId.Name(), //
   DbSubnets.Name(),
 ]);
+
+// ========================================================
+// Condition
+// ========================================================
+const EnvironmentIsProduction = stack.addCondition(
+  'EnvironmentIsProduction',
+  Fn_Equals(Environment.Ref(), 'production')
+);
 
 // ========================================================
 // Resources
@@ -72,6 +89,7 @@ const MasterDbInstance = stack.addResource('MasterDbInstance', {
 
 stack.addResource('ReadReplica', {
   Type: 'AWS::RDS::DBInstance',
+  Condition: EnvironmentIsProduction.Condition(),
   Properties: {
     SourceDBInstanceIdentifier: MasterDbInstance.Ref(),
     DBInstanceClass: 'db.t2.micro',

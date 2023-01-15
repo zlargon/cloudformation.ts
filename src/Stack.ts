@@ -1,4 +1,5 @@
 import { CloudFormation_Interface } from './CloudFormation_Interface.ts';
+import { Condition } from './Conditions.ts';
 import { Fn_FindInMap } from './Fn_FindInMap.ts';
 import { Parameter } from './Parameter.ts';
 import { Ref } from './Ref.ts';
@@ -13,6 +14,7 @@ interface Stack {
   };
   Parameters?: Record<string, Parameter>;
   Mappings?: Record<string, Record<string, unknown>>;
+  Conditions?: Record<string, Condition>;
   Resources: Record<string, Resource>;
 }
 
@@ -44,12 +46,14 @@ function createLogicalReference(LogicalNameSet: Set<string>, logicalName: string
 
 export function Stack() {
   const LogicalNameSet = new Set<string>();
+  const LogicalConditionSet = new Set<string>();
   const stack: Stack = {
     AWSTemplateFormatVersion: '2010-09-09',
     Description: undefined,
     Metadata: undefined,
     Parameters: undefined,
     Mappings: undefined,
+    Conditions: undefined,
     Resources: {},
   };
 
@@ -101,6 +105,23 @@ export function Stack() {
 
       return (TopLevelKey: MapKey | Ref, SecondLevelKey: keyof MapValue) => {
         return Fn_FindInMap<typeof maps>({ MapName, TopLevelKey, SecondLevelKey });
+      };
+    },
+
+    addCondition(logicalName: string, condition: Condition) {
+      if (typeof stack.Conditions === 'undefined') {
+        stack.Conditions = {};
+      }
+      stack.Conditions[logicalName] = condition;
+
+      // check duplicated condition
+      if (LogicalConditionSet.has(logicalName)) {
+        throw new Error(`logical condition name '${logicalName}' has been used.`);
+      }
+      LogicalConditionSet.add(logicalName);
+
+      return {
+        Condition: () => logicalName,
       };
     },
 
