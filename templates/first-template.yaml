@@ -36,12 +36,9 @@ Resources:
               num: 123
         - Key: Name3
           Value: !Sub
-            - '${AWS::StackName}-web-server-${instanceType}-hello-123'
-            - instanceType: !Ref InstanceType
-        - Key: Name4
-          Value: web-server-hello-123
-        - Key: Name5
-          Value: web-server-hello-hello-123-123
+            - 'web-server-${str}-${str}-${num}-${num}'
+            - str: hello
+              num: 123
         - Key: Project
           Value: CloudFormation Step By Step
   SQSQueue:

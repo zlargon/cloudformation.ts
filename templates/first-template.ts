@@ -2,8 +2,6 @@
 import { Stack } from '../src/Stack.ts';
 import { NameTag, Tag } from '../src/Tag.ts';
 import { Fn_Sub } from '../src/Fn_Sub.ts';
-import { PseudoParameter } from '../src/PseudoParameter.ts';
-import { Fn_Format } from '../src/Fn_Format.ts';
 
 // create stack
 const stack = Stack();
@@ -60,23 +58,7 @@ const WebServerInstance = stack.addResource('WebServerInstance', {
       ),
       Tag(
         'Name3',
-        Fn_Format('{{stackName}}-web-server-{{instanceType}}-{{str}}-{{num}}', {
-          stackName: PseudoParameter.StackName,
-          instanceType: InstanceType.Ref(),
-          str: 'hello',
-          num: 123,
-        })
-      ),
-      Tag(
-        'Name4',
-        Fn_Format('web-server-{{str}}-{{num}}', {
-          str: 'hello',
-          num: 123,
-        })
-      ),
-      Tag(
-        'Name5',
-        Fn_Format('web-server-{{str}}-{{str}}-{{num}}-{{num}}', {
+        Fn_Sub('web-server-${str}-${str}-${num}-${num}', {
           str: 'hello',
           num: 123,
         })

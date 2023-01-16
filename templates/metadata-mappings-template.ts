@@ -1,7 +1,6 @@
 #!/usr/bin/env -S deno run
-import { Fn_Format } from '../src/Fn_Format.ts';
 import { Fn_Select } from '../src/Fn_Select.ts';
-import { PseudoParameter } from '../src/PseudoParameter.ts';
+import { Fn_Sub } from '../src/Fn_Sub.ts';
 import { Stack } from '../src/Stack.ts';
 import { NameTag } from '../src/Tag.ts';
 
@@ -101,13 +100,7 @@ stack.addResource('Bastion', {
       Options: DbSubnets.Ref(),
       Index: 0,
     }),
-    Tags: [
-      NameTag(
-        Fn_Format('{{stackName}}-Bastion', {
-          stackName: PseudoParameter.StackName,
-        })
-      ),
-    ],
+    Tags: [NameTag(Fn_Sub('${AWS::StackName}-Bastion'))],
   },
 });
 
