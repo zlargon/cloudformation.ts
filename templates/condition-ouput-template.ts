@@ -3,9 +3,7 @@ import { Fn_Equals } from '../src/Conditions.ts';
 import { Fn_If } from '../src/Fn_If.ts';
 import { Stack } from '../src/Stack.ts';
 
-// create stack
-const stack = Stack();
-stack.setDescription(`
+const stack = Stack(`
 A database stack template that creates a master RDS instance and a read replica.
 It also provisions a security group and attaches to the db instances.`);
 

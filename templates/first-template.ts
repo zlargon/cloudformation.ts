@@ -3,9 +3,7 @@ import { Stack } from '../src/Stack.ts';
 import { NameTag, Tag } from '../src/Tag.ts';
 import { Fn_Sub } from '../src/Fn_Sub.ts';
 
-// create stack
-const stack = Stack();
-stack.setDescription('Our first template in CloudFormation course.');
+const stack = Stack('Our first template in CloudFormation course.');
 
 // ========================================================
 // Parameters

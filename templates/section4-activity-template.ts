@@ -5,15 +5,11 @@ import { Fn_Select } from '../src/Fn_Select.ts';
 import { PseudoParameter } from '../src/PseudoParameter.ts';
 import { Fn_Sub } from '../src/Fn_Sub.ts';
 
-const stack = Stack();
-stack.setDescription(`
-
+const stack = Stack(`
 Section 4 Activity template.
 It launches a VPC with public and private subnets,
 a web server EC2 instance in the public subnet
-and a security group attached to this EC2 instance.
-
-`);
+and a security group attached to this EC2 instance.`);
 
 // ==============================================
 // Parameters

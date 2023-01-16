@@ -4,8 +4,7 @@ import { PseudoParameter } from '../src/PseudoParameter.ts';
 import { Stack } from '../src/Stack.ts';
 import { NameTag } from '../src/Tag.ts';
 
-const stack = Stack();
-stack.setDescription(`
+const stack = Stack(`
 Section 7 Activity template.
 This template creates an EC2 instance and an EBS volume attached to it.`);
 

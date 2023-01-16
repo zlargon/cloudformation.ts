@@ -2,8 +2,7 @@
 import { Fn_Select } from '../src/Fn_Select.ts';
 import { Stack } from '../src/Stack.ts';
 
-const stack = Stack();
-stack.setDescription('security groups');
+const stack = Stack('security groups');
 
 // ========================================================
 // Parameters

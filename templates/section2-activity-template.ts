@@ -2,8 +2,7 @@
 import { Stack } from '../src/Stack.ts';
 import { NameTag } from '../src/Tag.ts';
 
-const stack = Stack();
-stack.setDescription('Section 2 activity solution template');
+const stack = Stack('Section 2 activity solution template');
 
 // VPC
 const ActivityVpc = stack.addResource('ActivityVpc', {

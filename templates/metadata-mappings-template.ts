@@ -4,8 +4,7 @@ import { Fn_Sub } from '../src/Fn_Sub.ts';
 import { Stack } from '../src/Stack.ts';
 import { NameTag } from '../src/Tag.ts';
 
-const stack = Stack();
-stack.setDescription('Sample database stack for the Metadata and Mappings section');
+const stack = Stack('Sample database stack for the Metadata and Mappings section');
 
 // ==============================================
 // Parameters

@@ -21,26 +21,12 @@ interface Stack {
   Outputs?: Record<string, Output>;
 }
 
-function getCloudFormationInterface(stack: Stack) {
-  const type = 'AWS::CloudFormation::Interface';
-  if (typeof stack.Metadata === 'undefined') {
-    stack.Metadata = {};
-  }
-  if (typeof stack.Metadata[type] === 'undefined') {
-    stack.Metadata[type] = {
-      ParameterGroups: undefined,
-      ParameterLabels: undefined,
-    };
-  }
-  return stack.Metadata[type];
-}
-
-export function Stack() {
+export function Stack(Description: string) {
   const LogicalNameSet = new Set<string>();
   const LogicalConditionSet = new Set<string>();
   const stack: Stack = {
     AWSTemplateFormatVersion: '2010-09-09',
-    Description: undefined,
+    Description: formatDescription(Description),
     Metadata: undefined,
     Parameters: undefined,
     Mappings: undefined,
@@ -50,16 +36,6 @@ export function Stack() {
   };
 
   return {
-    setDescription(description: string) {
-      // convert to single line, and trim the leading and trailing spaces
-      description = description.replaceAll('\n', ' ').trim();
-
-      if (description.length > 1024) {
-        throw new Error('must be a literal string that is between 0 and 1024 bytes in length');
-      }
-      stack.Description = description;
-    },
-
     metadata: {
       addParameterGroup(label: string, parameters: string[]) {
         const metadata = getCloudFormationInterface(stack);
@@ -161,4 +137,28 @@ export function Stack() {
       return JSON.stringify(stack, null, 4);
     },
   };
+}
+
+function formatDescription(description: string) {
+  // convert to single line, and trim the leading and trailing spaces
+  description = description.replaceAll('\n', ' ').trim();
+
+  if (description.length > 1024) {
+    throw new Error('must be a literal string that is between 0 and 1024 bytes in length');
+  }
+  return description;
+}
+
+function getCloudFormationInterface(stack: Stack) {
+  const type = 'AWS::CloudFormation::Interface';
+  if (typeof stack.Metadata === 'undefined') {
+    stack.Metadata = {};
+  }
+  if (typeof stack.Metadata[type] === 'undefined') {
+    stack.Metadata[type] = {
+      ParameterGroups: undefined,
+      ParameterLabels: undefined,
+    };
+  }
+  return stack.Metadata[type];
 }

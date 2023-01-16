@@ -6,8 +6,7 @@ import { PseudoParameter } from '../src/PseudoParameter.ts';
 import { Stack } from '../src/Stack.ts';
 import { NameTag } from '../src/Tag.ts';
 
-const stack = Stack();
-stack.setDescription(`
+const stack = Stack(`
 Section 5 Activity template.
 It launches a web server EC2 instance with separate security groups for HTTP and SSH access.
 It creates an EBS volume and attaches it to the EC2 instance.`);

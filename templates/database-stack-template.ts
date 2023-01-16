@@ -1,8 +1,7 @@
 #!/usr/bin/env -S deno run
 import { Stack } from '../src/Stack.ts';
 
-const stack = Stack();
-stack.setDescription('Sample database stack for the Parameters section');
+const stack = Stack('Sample database stack for the Parameters section');
 
 // ========================================================
 // Parameters
