@@ -3,7 +3,6 @@ import { Stack } from '../src/Stack.ts';
 import { NameTag } from '../src/Tag.ts';
 import { Fn_Select } from '../src/Fn_Select.ts';
 import { PseudoParameter } from '../src/PseudoParameter.ts';
-import { Ref } from '../src/Ref.ts';
 import { Fn_Sub } from '../src/Fn_Sub.ts';
 
 const stack = Stack();
@@ -195,7 +194,7 @@ stack.addResource('WebServerInstance', {
   Properties: {
     InstanceType: InstanceType.Ref(), // t2.micro
     SubnetId: PublicSubnet.Ref(),
-    ImageId: Fn_FindInRegionImageMap(Ref(PseudoParameter.Region), 'ImageId'), // ami-0b5eea76982371e91
+    ImageId: Fn_FindInRegionImageMap(PseudoParameter.Region.Ref(), 'ImageId'), // ami-0b5eea76982371e91
     KeyName: KeyPairName.Ref(),
     SecurityGroupIds: [WebServerSecurityGroup.Ref()],
     BlockDeviceMappings: [

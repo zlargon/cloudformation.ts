@@ -3,7 +3,6 @@ import { Fn_Equals } from '../src/Conditions.ts';
 import { Fn_If } from '../src/Fn_If.ts';
 import { Fn_Sub } from '../src/Fn_Sub.ts';
 import { PseudoParameter } from '../src/PseudoParameter.ts';
-import { Ref } from '../src/Ref.ts';
 import { Stack } from '../src/Stack.ts';
 import { NameTag } from '../src/Tag.ts';
 
@@ -110,16 +109,16 @@ const WebServerInstance = stack.addResource('WebServerInstance', {
   Properties: {
     InstanceType: 't2.micro',
     SubnetId: WebServerSubnet.Ref(),
-    ImageId: Fn_FindInRegionImageMap(Ref(PseudoParameter.Region), 'ImageId'),
+    ImageId: Fn_FindInRegionImageMap(PseudoParameter.Region.Ref(), 'ImageId'),
     KeyName: Fn_If(SshAccessAllowed.Condition(), {
       Then: KeyPairName.Ref(),
-      Else: Ref(PseudoParameter.NoValue),
+      Else: PseudoParameter.NoValue.Ref(),
     }),
     SecurityGroupIds: [
       HttpSecurityGroup.Ref(),
       Fn_If(SshAccessAllowed.Condition(), {
         Then: SshSecurityGroup.Ref(),
-        Else: Ref(PseudoParameter.NoValue),
+        Else: PseudoParameter.NoValue.Ref(),
       }),
     ],
     Tags: [NameTag(Fn_Sub('${AWS::StackName}-WebServer'))],

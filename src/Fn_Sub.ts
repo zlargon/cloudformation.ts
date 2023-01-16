@@ -1,4 +1,4 @@
-import { isValidPseudoParameter, PseudoParameter } from './PseudoParameter.ts';
+import { PseudoParameterSet } from './PseudoParameter.ts';
 
 export interface SubValue {
   'Fn::Sub': string | [string, Record<string, unknown>];
@@ -12,8 +12,8 @@ export const Fn_Sub = (stringTemplate: string, keyValuePair?: Record<string, unk
 
     // pseudo parameter
     if (param.includes(':')) {
-      if (!isValidPseudoParameter(param)) {
-        const pseudoList = Object.values(PseudoParameter).join(', ');
+      if (!PseudoParameterSet.has(param)) {
+        const pseudoList = Array.from(PseudoParameterSet).join(', ');
         throw new Error(`Invalid pseudo parameter ${paramWithBracket}. Pseudo parameter should be: ${pseudoList}`);
       }
       continue;
