@@ -36,7 +36,7 @@ Resources:
               num: 123
         - Key: Name3
           Value: !Sub
-            - 'web-server-${str}-${str}-${num}-${num}'
+            - 'web-server-${str}-${str}-${num}-${!num}'
             - str: hello
               num: 123
         - Key: Project

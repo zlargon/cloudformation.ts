@@ -56,7 +56,7 @@ const WebServerInstance = stack.addResource('WebServerInstance', {
       ),
       Tag(
         'Name3',
-        Fn_Sub('web-server-${str}-${str}-${num}-${num}', {
+        Fn_Sub('web-server-${str}-${str}-${num}-${!num}', {
           str: 'hello',
           num: 123,
         })

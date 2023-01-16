@@ -1,23 +1,24 @@
 import { PseudoParameterSet } from './PseudoParameter.ts';
+import { Value } from './Value.ts';
 
 export interface SubValue {
-  'Fn::Sub': string | [string, Record<string, unknown>];
+  'Fn::Sub': string | [string, Record<string, Value>];
 }
 
 // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-sub.html
-export const Fn_Sub = (stringTemplate: string, keyValuePair?: Record<string, unknown>): SubValue => {
-  const params = stringTemplate.match(/\$\{[A-Za-z0-9:]+\}/g) ?? [];
+export const Fn_Sub = (stringTemplate: string, keyValuePair?: Record<string, Value>): SubValue => {
+  const params = stringTemplate.match(/\$\{[^\$\{\}]+\}/g) ?? [];
+
   for (const paramWithBracket of params) {
     const param = paramWithBracket.slice(2, -1); // remove ${ and }
 
-    // pseudo parameter
-    if (param.includes(':')) {
-      if (!PseudoParameterSet.has(param)) {
-        const pseudoList = Array.from(PseudoParameterSet).join(', ');
-        throw new Error(`Invalid pseudo parameter ${paramWithBracket}. Pseudo parameter should be: ${pseudoList}`);
-      }
-      continue;
-    }
+    // To write a dollar sign and curly braces (${}) literally, add an
+    // exclamation point (!) after the open curly brace, such as ${!Literal}.
+    // CloudFormation resolves this text as ${Literal}.
+    if (param.charAt(0) === '!') continue;
+
+    // Valid pseudo parameter
+    if (PseudoParameterSet.has(param)) continue;
 
     // key value pair
     if (typeof keyValuePair === 'undefined' || !(param in keyValuePair)) {
