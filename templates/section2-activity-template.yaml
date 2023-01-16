@@ -39,6 +39,16 @@ Resources:
     Properties:
       RouteTableId: !Ref ActivityRouteTable
       SubnetId: !Ref ActivitySubnet
+  ActivitySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Activity security group
+      VpcId: !Ref ActivityVpc
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: icmp
+          FromPort: -1
+          ToPort: -1
   ActivityInstance:
     Type: AWS::EC2::Instance
     DependsOn:
@@ -50,13 +60,3 @@ Resources:
       ImageId: ami-0b5eea76982371e91
       SecurityGroupIds:
         - !Ref ActivitySecurityGroup
-  ActivitySecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Activity security group
-      VpcId: !Ref ActivityVpc
-      SecurityGroupIngress:
-        - CidrIp: 0.0.0.0/0
-          IpProtocol: icmp
-          FromPort: -1
-          ToPort: -1
