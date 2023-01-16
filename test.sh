@@ -17,6 +17,7 @@ templates=(
   section5-activity-template
   change-sets-template
   section6-activity-template
+  database-stack-template-2
 )
 
 function test_template {
