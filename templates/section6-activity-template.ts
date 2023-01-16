@@ -29,7 +29,7 @@ const Fn_FindInRegionImageMap = stack.addMapping('RegionImages', {
 // ==============================================
 // Resources
 // ==============================================
-const WebServerInstance = stack.addResource('WebServerInstance', {
+stack.addResource('WebServerInstance', {
   Type: 'AWS::EC2::Instance',
   Properties: {
     InstanceType: 't2.micro',
@@ -39,24 +39,8 @@ const WebServerInstance = stack.addResource('WebServerInstance', {
   },
 });
 
-// EBS Volume that should be created in the same AZ with the WebServerInstance
-const EbsVolume = stack.addResource('EbsVolume', {
-  Type: 'AWS::EC2::Volume',
-  Properties: {
-    AvailabilityZone: WebServerInstance.Attr('AvailabilityZone'),
-    VolumeType: 'gp2',
-    Size: 10,
-    Tags: [NameTag(Fn_Sub('${AWS::StackName}-Volume'))],
-  },
-});
-
-stack.addResource('VolumeAttachment', {
-  Type: 'AWS::EC2::VolumeAttachment',
-  Properties: {
-    Device: '/dev/sdf',
-    InstanceId: WebServerInstance.Ref(),
-    VolumeId: EbsVolume.Ref(),
-  },
+stack.addResource('S3Bucket', {
+  Type: 'AWS::S3::Bucket',
 });
 
 console.log(stack.json());

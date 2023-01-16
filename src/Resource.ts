@@ -12,6 +12,7 @@ import { EC2_VPC } from './EC2_VPC.ts';
 import { EC2_VPCGatewayAttachment } from './EC2_VPCGatewayAttachment.ts';
 import { RDS_DBInstance } from './RDS_DBInstance.ts';
 import { RDS_DBSubnetGroup } from './RDS_DBSubnetGroup.ts';
+import { S3_Bucket } from './S3_Bucket.ts';
 import { SNS_Topic } from './SNS_Topic.ts';
 import { SQS_Queue } from './SQS_Queue.ts';
 
@@ -31,4 +32,5 @@ export type Resource =
   | EC2_Volume
   | EC2_VolumeAttachment
   | EC2_VPC
-  | EC2_VPCGatewayAttachment;
+  | EC2_VPCGatewayAttachment
+  | S3_Bucket;

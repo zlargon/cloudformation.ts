@@ -26,19 +26,5 @@ Resources:
         - Key: Name
           Value: !Sub '${AWS::StackName}-WebServer'
 
-  EbsVolume:
-    Type: AWS::EC2::Volume
-    Properties:
-      AvailabilityZone: !GetAtt [WebServerInstance, AvailabilityZone]
-      VolumeType: gp2
-      Size: 10
-      Tags:
-        - Key: Name
-          Value: !Sub '${AWS::StackName}-Volume'
-
-  VolumeAttachment:
-    Type: AWS::EC2::VolumeAttachment
-    Properties:
-      Device: /dev/sdf
-      InstanceId: !Ref WebServerInstance
-      VolumeId: !Ref EbsVolume
+  S3Bucket:
+    Type: AWS::S3::Bucket
