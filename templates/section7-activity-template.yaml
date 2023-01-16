@@ -35,10 +35,3 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub '${AWS::StackName}-Volume'
-
-  VolumeAttachment:
-    Type: AWS::EC2::VolumeAttachment
-    Properties:
-      Device: /dev/sdf
-      InstanceId: !Ref WebServerInstance
-      VolumeId: !Ref EbsVolume

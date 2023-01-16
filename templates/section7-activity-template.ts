@@ -39,22 +39,13 @@ const WebServerInstance = stack.addResource('WebServerInstance', {
   },
 });
 
-const EbsVolume = stack.addResource('EbsVolume', {
+stack.addResource('EbsVolume', {
   Type: 'AWS::EC2::Volume',
   Properties: {
     AvailabilityZone: WebServerInstance.Attr('AvailabilityZone'),
     VolumeType: 'gp2',
     Size: 10,
     Tags: [NameTag(Fn_Sub('${AWS::StackName}-Volume'))],
-  },
-});
-
-stack.addResource('VolumeAttachment', {
-  Type: 'AWS::EC2::VolumeAttachment',
-  Properties: {
-    Device: '/dev/sdf',
-    InstanceId: WebServerInstance.Ref(),
-    VolumeId: EbsVolume.Ref(),
   },
 });
 
