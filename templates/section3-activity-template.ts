@@ -1,8 +1,7 @@
 #!/usr/bin/env -S deno run
 import { Stack } from '../src/Stack.ts';
-import { NameTag } from '../src/Tag.ts';
+import { NameTag, NameTagSub } from '../src/Tag.ts';
 import { Fn_Select } from '../src/Fn_Select.ts';
-import { Fn_Sub } from '../src/Fn_Sub.ts';
 
 const stack = Stack(`
 Section 3 Activity template.
@@ -62,7 +61,7 @@ const Vpc = stack.addResource('Vpc', {
     }),
     EnableDnsSupport: true,
     EnableDnsHostnames: true,
-    Tags: [NameTag(Fn_Sub('${AWS::StackName}-vpc'))],
+    Tags: [NameTagSub('${AWS::StackName}-vpc')],
   },
 });
 

@@ -2,11 +2,10 @@
 import { Fn_GetAZs } from '../src/Fn_GetAZs.ts';
 import { Fn_Join } from '../src/Fn_Join.ts';
 import { Fn_Select } from '../src/Fn_Select.ts';
-import { Fn_Sub } from '../src/Fn_Sub.ts';
 import { PseudoParameter } from '../src/PseudoParameter.ts';
 import { Ref } from '../src/Ref.ts';
 import { Stack } from '../src/Stack.ts';
-import { NameTag } from '../src/Tag.ts';
+import { NameTagSub } from '../src/Tag.ts';
 
 const stack = Stack(`
 Network stack template for
@@ -19,7 +18,7 @@ const Vpc = stack.addResource('Vpc', {
   Type: 'AWS::EC2::VPC',
   Properties: {
     CidrBlock: '10.0.0.0/16',
-    Tags: [NameTag(Fn_Sub('${AWS::StackName}-VPC'))],
+    Tags: [NameTagSub('${AWS::StackName}-VPC')],
   },
 });
 
@@ -31,7 +30,7 @@ const PublicRouteTable = stack.addResource('PublicRouteTable', {
   Description: 'A route table that has a route to the Internet',
   Properties: {
     VpcId: Vpc.Ref(),
-    Tags: [NameTag(Fn_Sub('${AWS::StackName}-PublicRouteTable'))],
+    Tags: [NameTagSub('${AWS::StackName}-PublicRouteTable')],
   },
 });
 
@@ -63,7 +62,7 @@ const PrivateRouteTable = stack.addResource('PrivateRouteTable', {
   Description: 'A route table that does not have a route to the Internet',
   Properties: {
     VpcId: Vpc.Ref(),
-    Tags: [NameTag(Fn_Sub('${AWS::StackName}-PrivateRouteTable'))],
+    Tags: [NameTagSub('${AWS::StackName}-PrivateRouteTable')],
   },
 });
 
@@ -90,7 +89,7 @@ function createSubnetWithRouteTable(params: {
       CidrBlock,
       MapPublicIpOnLaunch,
       VpcId: Vpc.Ref(),
-      Tags: [NameTag(Fn_Sub(`\${AWS::StackName}-${SubnetName}`))],
+      Tags: [NameTagSub(`\${AWS::StackName}-${SubnetName}`)],
     },
   });
 
@@ -147,7 +146,7 @@ const AppSecurityGroup = stack.addResource('AppSecurityGroup', {
   Properties: {
     VpcId: Vpc.Ref(),
     GroupDescription: 'Security group for application instances',
-    Tags: [NameTag(Fn_Sub('${AWS::StackName}-AppSecurityGroup'))],
+    Tags: [NameTagSub('${AWS::StackName}-AppSecurityGroup')],
   },
 });
 
@@ -164,7 +163,7 @@ const DbSecurityGroup = stack.addResource('DbSecurityGroup', {
         IpProtocol: 'tcp',
       },
     ],
-    Tags: [NameTag(Fn_Sub('${AWS::StackName}-DbSecurityGroup'))],
+    Tags: [NameTagSub('${AWS::StackName}-DbSecurityGroup')],
   },
 });
 

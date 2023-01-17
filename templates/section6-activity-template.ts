@@ -1,8 +1,7 @@
 #!/usr/bin/env -S deno run
-import { Fn_Sub } from '../src/Fn_Sub.ts';
 import { PseudoParameter } from '../src/PseudoParameter.ts';
 import { Stack } from '../src/Stack.ts';
-import { NameTag } from '../src/Tag.ts';
+import { NameTagSub } from '../src/Tag.ts';
 
 const stack = Stack(`
 Section 6 Activity template.
@@ -33,7 +32,7 @@ stack.addResource('WebServerInstance', {
     InstanceType: 't2.micro',
     SubnetId: WebServerSubnet.Ref(),
     ImageId: Fn_FindInRegionImageMap(PseudoParameter.Region.Ref(), 'ImageId'),
-    Tags: [NameTag(Fn_Sub('${AWS::StackName}-WebServer'))],
+    Tags: [NameTagSub('${AWS::StackName}-WebServer')],
   },
 });
 

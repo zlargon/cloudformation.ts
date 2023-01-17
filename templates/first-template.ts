@@ -1,7 +1,6 @@
 #!/usr/bin/env -S deno run
 import { Stack } from '../src/Stack.ts';
-import { NameTag, Tag } from '../src/Tag.ts';
-import { Fn_Sub } from '../src/Fn_Sub.ts';
+import { NameTag, NameTagSub, Tag, TagSub } from '../src/Tag.ts';
 
 const stack = Stack('Our first template in CloudFormation course.');
 
@@ -45,22 +44,16 @@ const WebServerInstance = stack.addResource('WebServerInstance', {
       WebServerSecurityGroup.Ref(), //
     ],
     Tags: [
-      NameTag(Fn_Sub('${AWS::StackName}-web-server')),
-      Tag(
-        'Name2',
-        Fn_Sub('${AWS::StackName}-web-server-${instanceType}-${str}-${num}', {
-          instanceType: InstanceType.Ref(),
-          str: 'hello',
-          num: 123,
-        })
-      ),
-      Tag(
-        'Name3',
-        Fn_Sub('web-server-${str}-${str}-${num}-${!num}', {
-          str: 'hello',
-          num: 123,
-        })
-      ),
+      NameTagSub('${AWS::StackName}-web-server'),
+      TagSub('Name2', '${AWS::StackName}-web-server-${instanceType}-${str}-${num}', {
+        instanceType: InstanceType.Ref(),
+        str: 'hello',
+        num: 123,
+      }),
+      TagSub('Name3', 'web-server-${str}-${str}-${num}-${!num}', {
+        str: 'hello',
+        num: 123,
+      }),
       Tag('Project', 'CloudFormation Step By Step'),
     ],
   },

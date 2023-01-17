@@ -1,8 +1,7 @@
 #!/usr/bin/env -S deno run
 import { Fn_Select } from '../src/Fn_Select.ts';
-import { Fn_Sub } from '../src/Fn_Sub.ts';
 import { Stack } from '../src/Stack.ts';
-import { NameTag } from '../src/Tag.ts';
+import { NameTagSub } from '../src/Tag.ts';
 
 const stack = Stack('Sample database stack for the Metadata and Mappings section');
 
@@ -99,7 +98,7 @@ stack.addResource('Bastion', {
       Options: DbSubnets.Ref(),
       Index: 0,
     }),
-    Tags: [NameTag(Fn_Sub('${AWS::StackName}-Bastion'))],
+    Tags: [NameTagSub('${AWS::StackName}-Bastion')],
   },
 });
 
