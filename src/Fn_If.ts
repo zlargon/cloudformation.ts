@@ -8,8 +8,10 @@ interface Fn_If_Condition<T> {
   Else: Value<T>;
 }
 
-export type IfConditionOutput<T> = { 'Fn::If': [string, Value<T>, Value<T>] };
+export interface IfConditionResultValue<T> {
+  'Fn::If': [string, Value<T>, Value<T>];
+}
 
-export const Fn_If = <T>(conditionName: string, { Then, Else }: Fn_If_Condition<T>): IfConditionOutput<T> => {
+export const Fn_If = <T>(conditionName: string, { Then, Else }: Fn_If_Condition<T>): IfConditionResultValue<T> => {
   return { 'Fn::If': [conditionName, Then, Else] };
 };

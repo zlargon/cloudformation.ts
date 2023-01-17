@@ -1,6 +1,6 @@
 import { Value } from './Value.ts';
 
-interface Fn_Join_Result {
+export interface JoinValue {
   'Fn::Join': [string, Value[]];
 }
 
@@ -10,6 +10,6 @@ interface Fn_Join_Props {
 }
 
 // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-join.html
-export const Fn_Join = ({ Values, Delimiter }: Fn_Join_Props): Fn_Join_Result => {
+export const Fn_Join = ({ Values, Delimiter }: Fn_Join_Props): JoinValue => {
   return { 'Fn::Join': [Delimiter, Values] };
 };
