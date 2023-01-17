@@ -22,7 +22,8 @@ export const Fn_Sub = (stringTemplate: string, keyValuePair?: Record<string, Val
 
     // key value pair
     if (typeof keyValuePair === 'undefined' || !(param in keyValuePair)) {
-      throw new Error(`Invalid parameter ${paramWithBracket}. It doesn't exist in the keyValuePair`);
+      const msg = `${paramWithBracket} doesn't exist in the keyValuePair. Might be a Resource, Parameter, or Invalid Parameter.`;
+      console.warn(msg);
     }
   }
 
