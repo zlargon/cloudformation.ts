@@ -2,6 +2,7 @@
 import { Fn_GetAZs } from '../src/Fn_GetAZs.ts';
 import { Fn_Join } from '../src/Fn_Join.ts';
 import { Fn_Select } from '../src/Fn_Select.ts';
+import { Fn_Sub } from '../src/Fn_Sub.ts';
 import { PseudoParameter } from '../src/PseudoParameter.ts';
 import { Ref } from '../src/Ref.ts';
 import { Stack } from '../src/Stack.ts';
@@ -188,11 +189,17 @@ stack.addOutput('PrivateSubnets', {
     Values: [PrivateSubnet1.Ref(), PrivateSubnet2.Ref()],
     Delimiter: ',',
   }),
+  Export: {
+    Name: Fn_Sub('${AWS::StackName}-PrivateSubnets'),
+  },
 });
 
 stack.addOutput('DbSecurityGroup', {
   Description: 'ID of the DB security group',
   Value: DbSecurityGroup.Ref(),
+  Export: {
+    Name: Fn_Sub('${AWS::StackName}-DbSecurityGroup'),
+  },
 });
 
 console.log(stack.json());

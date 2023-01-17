@@ -1,4 +1,6 @@
 #!/usr/bin/env -S deno run
+import { Fn_ImportValueSub } from '../src/Fn_ImportValue.ts';
+import { Fn_Split } from '../src/Fn_Split.ts';
 import { Stack } from '../src/Stack.ts';
 
 const stack = Stack(`
@@ -8,14 +10,9 @@ AWS CloudFormation Step by Step: Intermediate to Advanced course.`);
 // ========================================================
 // Parameters
 // ========================================================
-const DbSubnets = stack.addParameter('DbSubnets', {
-  Type: 'List<AWS::EC2::Subnet::Id>',
-  Description: 'Subnets that the DB instance will be launched into.',
-});
-
-const DbSecurityGroup = stack.addParameter('DbSecurityGroup', {
-  Type: 'AWS::EC2::SecurityGroup::Id',
-  Description: 'The security group that will be attached to the DB instance.',
+const NetworkStackName = stack.addParameter('NetworkStackName', {
+  Type: 'String',
+  Description: 'The name of the network stack referenced',
 });
 
 const AllocatedStorage = stack.addParameter('AllocatedStorage', {
@@ -45,8 +42,7 @@ stack.metadata.addParameterGroup('Database Instance Settings', [
 ]);
 
 stack.metadata.addParameterGroup('Network Settings', [
-  DbSecurityGroup.Name(), //
-  DbSubnets.Name(),
+  NetworkStackName.Name(), //
 ]);
 
 // ========================================================
@@ -56,7 +52,10 @@ const DbSubnetGroup = stack.addResource('DbSubnetGroup', {
   Type: 'AWS::RDS::DBSubnetGroup',
   Properties: {
     DBSubnetGroupDescription: 'The subnets to launch the db instance into.',
-    SubnetIds: DbSubnets.Ref(),
+    SubnetIds: Fn_Split({
+      Source: Fn_ImportValueSub('${NetworkStackName}-PrivateSubnets'),
+      Delimiter: ',',
+    }),
   },
 });
 
@@ -70,7 +69,9 @@ stack.addResource('DbInstance', {
     MasterUsername: 'dbadmin',
     MasterUserPassword: 'dbpassword',
     DBSubnetGroupName: DbSubnetGroup.Ref(),
-    VPCSecurityGroups: [DbSecurityGroup.Ref()],
+    VPCSecurityGroups: [
+      Fn_ImportValueSub('${NetworkStackName}-DbSecurityGroup'), //
+    ],
   },
 });
 

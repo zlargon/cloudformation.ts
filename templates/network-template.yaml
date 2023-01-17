@@ -166,7 +166,11 @@ Outputs:
       - ','
       - - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2
+    Export:
+      Name: !Sub '${AWS::StackName}-PrivateSubnets'
 
   DbSecurityGroup:
     Description: ID of the DB security group
     Value: !Ref DbSecurityGroup
+    Export:
+      Name: !Sub '${AWS::StackName}-DbSecurityGroup'
