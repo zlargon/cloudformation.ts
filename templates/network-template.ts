@@ -4,6 +4,7 @@ import { Fn_Join } from '../src/Fn_Join.ts';
 import { Fn_Select } from '../src/Fn_Select.ts';
 import { Fn_Sub } from '../src/Fn_Sub.ts';
 import { PseudoParameter } from '../src/PseudoParameter.ts';
+import { Ref } from '../src/Ref.ts';
 import { Stack } from '../src/Stack.ts';
 import { NameTag } from '../src/Tag.ts';
 
@@ -69,90 +70,73 @@ const PrivateRouteTable = stack.addResource('PrivateRouteTable', {
 // ========================================================
 // Subnets
 // ========================================================
-const PublicSubnet1 = stack.addResource('PublicSubnet1', {
-  Type: 'AWS::EC2::Subnet',
-  Properties: {
-    AvailabilityZone: Fn_Select({
-      Options: Fn_GetAZs(PseudoParameter.Region.Ref()), //
-      Index: 0,
-    }),
-    CidrBlock: '10.0.0.0/24',
-    MapPublicIpOnLaunch: true,
-    VpcId: Vpc.Ref(),
-    Tags: [NameTag(Fn_Sub('${AWS::StackName}-PublicSubnet1'))],
-  },
+function createSubnetWithRouteTable(params: {
+  Stack: Stack;
+  SubnetName: string;
+  AZIndex: number;
+  CidrBlock: string;
+  RouteTableRef: Ref;
+  MapPublicIpOnLaunch?: boolean;
+}) {
+  const { Stack, SubnetName, AZIndex, CidrBlock, RouteTableRef, MapPublicIpOnLaunch } = params;
+
+  const Subnet = Stack.addResource(SubnetName, {
+    Type: 'AWS::EC2::Subnet',
+    Properties: {
+      AvailabilityZone: Fn_Select({
+        Options: Fn_GetAZs(PseudoParameter.Region.Ref()), //
+        Index: AZIndex,
+      }),
+      CidrBlock,
+      MapPublicIpOnLaunch,
+      VpcId: Vpc.Ref(),
+      Tags: [NameTag(Fn_Sub(`\${AWS::StackName}-${SubnetName}`))],
+    },
+  });
+
+  Stack.addResource(`${SubnetName}RouteTblAscn`, {
+    Type: 'AWS::EC2::SubnetRouteTableAssociation',
+    Properties: {
+      RouteTableId: RouteTableRef,
+      SubnetId: Subnet.Ref(),
+    },
+  });
+
+  return Subnet;
+}
+
+const PublicSubnet1 = createSubnetWithRouteTable({
+  Stack: stack,
+  SubnetName: 'PublicSubnet1',
+  AZIndex: 0,
+  CidrBlock: '10.0.0.0/24',
+  MapPublicIpOnLaunch: true,
+  RouteTableRef: PublicRouteTable.Ref(),
 });
 
-stack.addResource('PublicSubnet1RouteTblAscn', {
-  Type: 'AWS::EC2::SubnetRouteTableAssociation',
-  Properties: {
-    RouteTableId: PublicRouteTable.Ref(),
-    SubnetId: PublicSubnet1.Ref(),
-  },
+const PublicSubnet2 = createSubnetWithRouteTable({
+  Stack: stack,
+  SubnetName: 'PublicSubnet2',
+  AZIndex: 1,
+  CidrBlock: '10.0.1.0/24',
+  MapPublicIpOnLaunch: true,
+  RouteTableRef: PublicRouteTable.Ref(),
 });
 
-const PublicSubnet2 = stack.addResource('PublicSubnet2', {
-  Type: 'AWS::EC2::Subnet',
-  Properties: {
-    AvailabilityZone: Fn_Select({
-      Options: Fn_GetAZs(PseudoParameter.Region.Ref()), //
-      Index: 1,
-    }),
-    CidrBlock: '10.0.1.0/24',
-    MapPublicIpOnLaunch: true,
-    VpcId: Vpc.Ref(),
-    Tags: [NameTag(Fn_Sub('${AWS::StackName}-PublicSubnet2'))],
-  },
+const PrivateSubnet1 = createSubnetWithRouteTable({
+  Stack: stack,
+  SubnetName: 'PrivateSubnet1',
+  AZIndex: 0,
+  CidrBlock: '10.0.2.0/24',
+  RouteTableRef: PrivateRouteTable.Ref(),
 });
 
-stack.addResource('PublicSubnet2RouteTblAscn', {
-  Type: 'AWS::EC2::SubnetRouteTableAssociation',
-  Properties: {
-    RouteTableId: PublicRouteTable.Ref(),
-    SubnetId: PublicSubnet2.Ref(),
-  },
-});
-
-const PrivateSubnet1 = stack.addResource('PrivateSubnet1', {
-  Type: 'AWS::EC2::Subnet',
-  Properties: {
-    AvailabilityZone: Fn_Select({
-      Options: Fn_GetAZs(PseudoParameter.Region.Ref()), //
-      Index: 0,
-    }),
-    CidrBlock: '10.0.2.0/24',
-    VpcId: Vpc.Ref(),
-    Tags: [NameTag(Fn_Sub('${AWS::StackName}-PrivateSubnet1'))],
-  },
-});
-
-stack.addResource('PrivateSubnet1RouteTblAscn', {
-  Type: 'AWS::EC2::SubnetRouteTableAssociation',
-  Properties: {
-    RouteTableId: PrivateRouteTable.Ref(),
-    SubnetId: PrivateSubnet1.Ref(),
-  },
-});
-
-const PrivateSubnet2 = stack.addResource('PrivateSubnet2', {
-  Type: 'AWS::EC2::Subnet',
-  Properties: {
-    AvailabilityZone: Fn_Select({
-      Options: Fn_GetAZs(PseudoParameter.Region.Ref()), //
-      Index: 1,
-    }),
-    CidrBlock: '10.0.3.0/24',
-    VpcId: Vpc.Ref(),
-    Tags: [NameTag(Fn_Sub('${AWS::StackName}-PrivateSubnet2'))],
-  },
-});
-
-stack.addResource('PrivateSubnet2RouteTblAscn', {
-  Type: 'AWS::EC2::SubnetRouteTableAssociation',
-  Properties: {
-    RouteTableId: PrivateRouteTable.Ref(),
-    SubnetId: PrivateSubnet2.Ref(),
-  },
+const PrivateSubnet2 = createSubnetWithRouteTable({
+  Stack: stack,
+  SubnetName: 'PrivateSubnet2',
+  AZIndex: 1,
+  CidrBlock: '10.0.3.0/24',
+  RouteTableRef: PrivateRouteTable.Ref(),
 });
 
 // ========================================================

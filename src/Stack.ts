@@ -8,7 +8,7 @@ import { Ref } from './Ref.ts';
 import { Resource } from './Resource.ts';
 
 // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html
-interface Stack {
+interface StackData {
   AWSTemplateFormatVersion: '2010-09-09';
   Description?: string;
   Metadata?: {
@@ -25,7 +25,7 @@ export function Stack(Description: string) {
   const LogicalNameSet = new Set<string>();
   const OutputLogicalNameSet = new Set<string>();
   const LogicalConditionSet = new Set<string>();
-  const stack: Stack = {
+  const stack: StackData = {
     AWSTemplateFormatVersion: '2010-09-09',
     Description: formatDescription(Description),
     Metadata: undefined,
@@ -150,7 +150,7 @@ function formatDescription(description: string) {
   return description;
 }
 
-function getCloudFormationInterface(stack: Stack) {
+function getCloudFormationInterface(stack: StackData) {
   const type = 'AWS::CloudFormation::Interface';
   if (typeof stack.Metadata === 'undefined') {
     stack.Metadata = {};
@@ -163,3 +163,5 @@ function getCloudFormationInterface(stack: Stack) {
   }
   return stack.Metadata[type];
 }
+
+export type Stack = ReturnType<typeof Stack>;
