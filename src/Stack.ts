@@ -6,6 +6,7 @@ import { Output } from './Output.ts';
 import { Parameter } from './Parameter.ts';
 import { Ref } from './Ref.ts';
 import { Resource } from './Resource.ts';
+import { Value } from './Value.ts';
 
 // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html
 interface StackData {
@@ -81,8 +82,8 @@ export function Stack(Description: string) {
       }
       stack.Mappings[MapName] = maps;
 
-      return (TopLevelKey: MapKey | Ref, SecondLevelKey: keyof MapValue) => {
-        return Fn_FindInMap<typeof maps>({ MapName, TopLevelKey, SecondLevelKey });
+      return (TopLevelKey: Value<MapKey>, SecondLevelKey: Value<keyof MapValue>) => {
+        return Fn_FindInMap<MapKey, MapValue>({ MapName, TopLevelKey, SecondLevelKey });
       };
     },
 

@@ -9,8 +9,7 @@ import { SplitValues } from './Fn_Split.ts';
 import { SubValue } from './Fn_Sub.ts';
 import { Ref } from './Ref.ts';
 
-// deno-lint-ignore no-explicit-any
-export type Value<T = any> =
+export type Value<T> =
   | T
   | IfConditionResultValue<T>
   | Ref
