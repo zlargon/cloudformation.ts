@@ -23,6 +23,7 @@ interface Stack {
 
 export function Stack(Description: string) {
   const LogicalNameSet = new Set<string>();
+  const OutputLogicalNameSet = new Set<string>();
   const LogicalConditionSet = new Set<string>();
   const stack: Stack = {
     AWSTemplateFormatVersion: '2010-09-09',
@@ -127,10 +128,10 @@ export function Stack(Description: string) {
       stack.Outputs[logicalName] = output;
 
       // check duplicated outputs
-      if (LogicalNameSet.has(logicalName)) {
-        throw new Error(`logical name '${logicalName}' has been used.`);
+      if (OutputLogicalNameSet.has(logicalName)) {
+        throw new Error(`Output logical name '${logicalName}' has been used.`);
       }
-      LogicalNameSet.add(logicalName);
+      OutputLogicalNameSet.add(logicalName);
     },
 
     json() {

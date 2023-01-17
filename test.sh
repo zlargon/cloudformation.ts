@@ -19,6 +19,8 @@ templates=(
   section6-activity-template
   database-stack-template-2
   section7-activity-template
+  database-template
+  network-template
 )
 
 function test_template {

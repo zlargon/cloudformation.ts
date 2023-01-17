@@ -1,14 +1,14 @@
-import { Ref } from './Ref.ts';
+import { Value } from './Value.ts';
 
-export interface SelectedValue<T = unknown> {
-  'Fn::Select': [number, Ref | T[]];
+export interface SelectedValue {
+  'Fn::Select': [number, Value | Value[]];
 }
 
-interface Fn_Select_Props<T> {
+interface Fn_Select_Props {
   Index: number;
-  Options: Ref | T[];
+  Options: Value | Value[];
 }
 
-export const Fn_Select = <T = unknown>({ Index, Options }: Fn_Select_Props<T>): SelectedValue<T> => {
+export const Fn_Select = ({ Index, Options }: Fn_Select_Props): SelectedValue => {
   return { 'Fn::Select': [Index, Options] };
 };

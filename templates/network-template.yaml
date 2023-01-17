@@ -1,0 +1,172 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  Network stack template for
+  AWS CloudFormation Step by Step: Intermediate to Advanced course.
+
+Resources:
+  Vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-VPC'
+
+  # Route tables ---
+  PublicRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Description: A route table that has a route to the Internet
+    Properties:
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-PublicRouteTable'
+
+  InternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+
+  InternetGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Description: Internet gateway attachment to the VPC
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref Vpc
+
+  InternetRoute:
+    Type: 'AWS::EC2::Route'
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+      RouteTableId: !Ref PublicRouteTable
+
+  PrivateRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Description: A route table that does not have a route to the Internet
+    Properties:
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-PrivateRouteTable'
+
+  # Subnets ---
+  PublicSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select
+        - 0
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      CidrBlock: 10.0.0.0/24
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-PublicSubnet1'
+
+  PublicSubnet1RouteTblAscn:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet1
+
+  PublicSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select
+        - 1
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-PublicSubnet2'
+
+  PublicSubnet2RouteTblAscn:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet2
+
+  PrivateSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select
+        - 0
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      CidrBlock: 10.0.2.0/24
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-PrivateSubnet1'
+
+  PrivateSubnet1RouteTblAscn:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnet1
+
+  PrivateSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select
+        - 1
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      CidrBlock: 10.0.3.0/24
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-PrivateSubnet2'
+
+  PrivateSubnet2RouteTblAscn:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnet2
+
+  # Security groups ---
+  AppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref Vpc
+      GroupDescription: 'Security group for application instances'
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-AppSecurityGroup'
+
+  DbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref Vpc
+      GroupDescription: 'Security group for DB instances'
+      SecurityGroupIngress:
+        - SourceSecurityGroupId: !Ref AppSecurityGroup
+          FromPort: 3306
+          ToPort: 3306
+          IpProtocol: tcp
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-DbSecurityGroup'
+
+Outputs:
+  VpcId:
+    Value: !Ref Vpc
+
+  PublicSubnets:
+    Description: 'Public subnet IDs as comma-delimited'
+    Value:
+      Fn::Join:
+        - ','
+        - - !Ref PublicSubnet1
+          - !Ref PublicSubnet2
+
+  PrivateSubnets:
+    Description: 'Private subnet IDs as comma-delimited'
+    Value: !Join
+      - ','
+      - - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+
+  DbSecurityGroup:
+    Description: ID of the DB security group
+    Value: !Ref DbSecurityGroup

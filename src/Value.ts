@@ -1,5 +1,6 @@
 import { MappingValue } from './Fn_FindInMap.ts';
 import { AttributeValue } from './Fn_GetAtt.ts';
+import { AZsValue } from './Fn_GetAZs.ts';
 import { IfConditionOutput } from './Fn_If.ts';
 import { SelectedValue } from './Fn_Select.ts';
 import { Ref } from './Ref.ts';
@@ -11,4 +12,5 @@ export type Value<T = any> =
   | SelectedValue
   | MappingValue
   | IfConditionOutput<T>
-  | AttributeValue;
+  | AttributeValue
+  | AZsValue;

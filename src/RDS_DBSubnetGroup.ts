@@ -6,9 +6,9 @@ import { Value } from './Value.ts';
 export interface RDS_DBSubnetGroup extends ResourceAttributes {
   Type: 'AWS::RDS::DBSubnetGroup';
   Properties: {
-    DBSubnetGroupDescription: string;
-    DBSubnetGroupName?: string;
-    SubnetIds: Value[] | Value;
+    DBSubnetGroupDescription: Value<string>;
+    DBSubnetGroupName?: Value<string>;
+    SubnetIds: Value<string>[] | Value<string>;
     Tags?: Tag[];
   };
 }
