@@ -2,6 +2,11 @@
 set -e
 cd "${0%/*}"
 
+# =========================================================
+# `cfn-flip` and `diff-so-fancy` commands are required to run the tests.
+# brew install cfn-flip diff-so-fancy
+# =========================================================
+
 # test cases
 templates=(
   first-sample-template

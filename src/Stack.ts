@@ -151,11 +151,11 @@ export function createStack({ Description }: StackOption) {
       const cmd = ['rain', 'deploy', `${stackName}.json`, stackName];
 
       console.log('\n\n--------------------------------------------------\n\n');
-      console.log('Deploy cloud formation stack:\n');
+      console.log('🚀 Deploy cloud formation stack:\n');
       console.log(`  1. Stack name => ${stackName}\n`);
       console.log(`  2. Use AWS_PROFILE => ${awsProfile}\n`);
       console.log(`  3. Generate cloud formation template file => ./${stackName}.json\n`);
-      console.log(`  4. Deploy cloud formation template by command => ${cmd.join(' ')}`);
+      console.log(`  4. Deploy cloud formation template by rain => ${cmd.join(' ')}`);
       console.log('\n\n--------------------------------------------------\n\n');
 
       Deno.env.set('AWS_PROFILE', awsProfile);
