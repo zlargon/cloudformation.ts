@@ -22,6 +22,8 @@ interface StackData {
   Outputs?: Record<string, Output>;
 }
 
+type DeployOption = { stackName: string; awsProfile?: string };
+
 export function Stack(Description: string) {
   const LogicalNameSet = new Set<string>();
   const OutputLogicalNameSet = new Set<string>();
@@ -137,6 +139,28 @@ export function Stack(Description: string) {
 
     json() {
       return JSON.stringify(stack, null, 4);
+    },
+
+    /**
+     *
+     * @param DeployOption.stackName : the cloud formation stack name
+     * @param DeployOption.awsProfile : (optional) for AWS_PROFILE. The default value is 'default'
+     */
+    async deploy({ stackName, awsProfile = 'default' }: DeployOption) {
+      const cmd = ['rain', 'deploy', `${stackName}.json`, stackName];
+
+      console.log('\n\n--------------------------------------------------\n\n');
+      console.log('Deploy cloud formation stack:\n');
+      console.log(`  1. Stack name => ${stackName}\n`);
+      console.log(`  2. Use AWS_PROFILE => ${awsProfile}\n`);
+      console.log(`  3. Generate cloud formation template file => ./${stackName}.json\n`);
+      console.log(`  4. Deploy cloud formation template by command => ${cmd.join(' ')}`);
+      console.log('\n\n--------------------------------------------------\n\n');
+
+      Deno.env.set('AWS_PROFILE', awsProfile);
+      await Deno.writeTextFile(`./${stackName}.json`, this.json());
+      await Deno.run({ cmd, stderr: 'inherit' }).status();
+      console.log('');
     },
   };
 }
