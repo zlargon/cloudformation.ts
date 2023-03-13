@@ -1,11 +1,13 @@
 #!/usr/bin/env -S deno run
 import { PseudoParameter } from '../src/PseudoParameter.ts';
-import { Stack } from '../src/Stack.ts';
+import { createStack } from '../src/Stack.ts';
 import { NameTagSub } from '../src/Tag.ts';
 
-const stack = Stack(`
+const stack = createStack({
+  Description: `
 Section 7 Activity template.
-This template creates an EC2 instance and an EBS volume attached to it.`);
+This template creates an EC2 instance and an EBS volume attached to it.`,
+});
 
 // ==============================================
 // Parameters

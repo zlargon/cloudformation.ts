@@ -1,13 +1,15 @@
 #!/usr/bin/env -S deno run
-import { Stack } from '../src/Stack.ts';
+import { createStack } from '../src/Stack.ts';
 import { NameTag, NameTagSub } from '../src/Tag.ts';
 import { Fn_Select } from '../src/Fn_Select.ts';
 
-const stack = Stack(`
+const stack = createStack({
+  Description: `
 Section 3 Activity template.
 It launches a VPC with public and private subnets,
 a web server EC2 instance in the public subnet
-and a security group attached to this EC2 instance.`);
+and a security group attached to this EC2 instance.`,
+});
 
 // ==============================================
 // Parameters

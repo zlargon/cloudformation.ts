@@ -1,8 +1,10 @@
 #!/usr/bin/env -S deno run
-import { Stack } from '../src/Stack.ts';
+import { createStack } from '../src/Stack.ts';
 import { NameTag, NameTagSub, Tag, TagSub } from '../src/Tag.ts';
 
-const stack = Stack('Our first template in CloudFormation course.');
+const stack = createStack({
+  Description: 'Our first template in CloudFormation course.',
+});
 
 // ========================================================
 // Parameters

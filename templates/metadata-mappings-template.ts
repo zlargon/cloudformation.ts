@@ -1,9 +1,11 @@
 #!/usr/bin/env -S deno run
 import { Fn_Select } from '../src/Fn_Select.ts';
-import { Stack } from '../src/Stack.ts';
+import { createStack } from '../src/Stack.ts';
 import { NameTagSub } from '../src/Tag.ts';
 
-const stack = Stack('Sample database stack for the Metadata and Mappings section');
+const stack = createStack({
+  Description: 'Sample database stack for the Metadata and Mappings section',
+});
 
 // ==============================================
 // Parameters

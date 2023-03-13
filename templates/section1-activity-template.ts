@@ -1,8 +1,10 @@
 #!/usr/bin/env -S deno run
 import { PartitionKey, StringAttribute } from '../src/DynamoDB_Table.ts';
-import { Stack } from '../src/Stack.ts';
+import { createStack } from '../src/Stack.ts';
 
-const stack = Stack('Section 1 activity template - AWS CloudFormation Step by Step: Beginner to Intermediate');
+const stack = createStack({
+  Description: 'Section 1 activity template - AWS CloudFormation Step by Step: Beginner to Intermediate',
+});
 
 // Dynamodb: SampleTable
 stack.addResource('SampleTable', {

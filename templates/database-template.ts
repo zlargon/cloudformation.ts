@@ -1,11 +1,13 @@
 #!/usr/bin/env -S deno run
 import { Fn_ImportValueSub } from '../src/Fn_ImportValue.ts';
 import { Fn_Split } from '../src/Fn_Split.ts';
-import { Stack } from '../src/Stack.ts';
+import { createStack } from '../src/Stack.ts';
 
-const stack = Stack(`
+const stack = createStack({
+  Description: `
 Database stack template for
-AWS CloudFormation Step by Step: Intermediate to Advanced course.`);
+AWS CloudFormation Step by Step: Intermediate to Advanced course.`,
+});
 
 // ========================================================
 // Parameters

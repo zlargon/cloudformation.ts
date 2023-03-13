@@ -1,8 +1,10 @@
 #!/usr/bin/env -S deno run
-import { Stack } from '../src/Stack.ts';
+import { createStack } from '../src/Stack.ts';
 import { NameTag } from '../src/Tag.ts';
 
-const stack = Stack('Section 2 activity solution template');
+const stack = createStack({
+  Description: 'Section 2 activity solution template',
+});
 
 // VPC
 const ActivityVpc = stack.addResource('ActivityVpc', {

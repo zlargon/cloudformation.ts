@@ -22,9 +22,10 @@ interface StackData {
   Outputs?: Record<string, Output>;
 }
 
+type StackOption = { Description: string };
 type DeployOption = { stackName: string; awsProfile?: string };
 
-export function Stack(Description: string) {
+export function createStack({ Description }: StackOption) {
   const LogicalNameSet = new Set<string>();
   const OutputLogicalNameSet = new Set<string>();
   const LogicalConditionSet = new Set<string>();
@@ -189,4 +190,4 @@ function getCloudFormationInterface(stack: StackData) {
   return stack.Metadata[type];
 }
 
-export type Stack = ReturnType<typeof Stack>;
+export type createStack = ReturnType<typeof createStack>;

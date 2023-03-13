@@ -1,7 +1,9 @@
 #!/usr/bin/env -S deno run
-import { Stack } from '../src/Stack.ts';
+import { createStack } from '../src/Stack.ts';
 
-const stack = Stack('Sample database stack template for AWS CLI section. It creates an Amazon RDS instance.');
+const stack = createStack({
+  Description: 'Sample database stack template for AWS CLI section. It creates an Amazon RDS instance.',
+});
 
 // ========================================================
 // Parameters

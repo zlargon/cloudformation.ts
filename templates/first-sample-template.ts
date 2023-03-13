@@ -1,7 +1,9 @@
 #!/usr/bin/env -S deno run
-import { Stack } from '../src/Stack.ts';
+import { createStack } from '../src/Stack.ts';
 
-const stack = Stack('Sample template for first stack - AWS CloudFormation Step by Step: Beginner to Intermediate');
+const stack = createStack({
+  Description: 'Sample template for first stack - AWS CloudFormation Step by Step: Beginner to Intermediate',
+});
 stack.addResource('SampleQueue', { Type: 'AWS::SQS::Queue' });
 stack.addResource('SampleTopic', {
   Type: 'AWS::SNS::Topic',

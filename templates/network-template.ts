@@ -5,12 +5,14 @@ import { Fn_Select } from '../src/Fn_Select.ts';
 import { Fn_Sub } from '../src/Fn_Sub.ts';
 import { PseudoParameter } from '../src/PseudoParameter.ts';
 import { Ref } from '../src/Ref.ts';
-import { Stack } from '../src/Stack.ts';
+import { createStack } from '../src/Stack.ts';
 import { NameTagSub } from '../src/Tag.ts';
 
-const stack = Stack(`
+const stack = createStack({
+  Description: `
 Network stack template for
-AWS CloudFormation Step by Step: Intermediate to Advanced course.`);
+AWS CloudFormation Step by Step: Intermediate to Advanced course.`,
+});
 
 // ========================================================
 // Resources
@@ -71,7 +73,7 @@ const PrivateRouteTable = stack.addResource('PrivateRouteTable', {
 // Subnets
 // ========================================================
 function createSubnetWithRouteTable(params: {
-  Stack: Stack;
+  Stack: createStack;
   SubnetName: string;
   AZIndex: number;
   CidrBlock: string;

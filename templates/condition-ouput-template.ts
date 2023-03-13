@@ -1,11 +1,13 @@
 #!/usr/bin/env -S deno run
 import { Fn_Equals } from '../src/Conditions.ts';
 import { Fn_If } from '../src/Fn_If.ts';
-import { Stack } from '../src/Stack.ts';
+import { createStack } from '../src/Stack.ts';
 
-const stack = Stack(`
+const stack = createStack({
+  Description: `
 A database stack template that creates a master RDS instance and a read replica.
-It also provisions a security group and attaches to the db instances.`);
+It also provisions a security group and attaches to the db instances.`,
+});
 
 // ========================================================
 // Parameters

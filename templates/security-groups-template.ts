@@ -1,8 +1,10 @@
 #!/usr/bin/env -S deno run
 import { Fn_Select } from '../src/Fn_Select.ts';
-import { Stack } from '../src/Stack.ts';
+import { createStack } from '../src/Stack.ts';
 
-const stack = Stack('security groups');
+const stack = createStack({
+  Description: 'security groups',
+});
 
 // ========================================================
 // Parameters

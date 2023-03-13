@@ -22,9 +22,11 @@ deno run templates/first-sample-template.ts | cfn-flip -y
 
 ```ts
 // example.ts
-import { Stack } from './src/Stack.ts';
+import { createStack } from './src/Stack.ts';
 
-const stack = Stack('This is my first s3 bucket.');
+const stack = createStack({
+  Description: 'This is my first s3 bucket.',
+});
 
 stack.addResource('s3', {
   Type: 'AWS::S3::Bucket',

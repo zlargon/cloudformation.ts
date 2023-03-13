@@ -2,13 +2,15 @@
 import { Fn_Equals } from '../src/Conditions.ts';
 import { Fn_If } from '../src/Fn_If.ts';
 import { PseudoParameter } from '../src/PseudoParameter.ts';
-import { Stack } from '../src/Stack.ts';
+import { createStack } from '../src/Stack.ts';
 import { NameTagSub } from '../src/Tag.ts';
 
-const stack = Stack(`
+const stack = createStack({
+  Description: `
 Section 5 Activity template.
 It launches a web server EC2 instance with separate security groups for HTTP and SSH access.
-It creates an EBS volume and attaches it to the EC2 instance.`);
+It creates an EBS volume and attaches it to the EC2 instance.`,
+});
 
 // ==============================================
 // Parameters
